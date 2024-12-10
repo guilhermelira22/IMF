@@ -3,10 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package imf.entity;
+package entities;
 
-import imf.exception.UnsupportedDataTypeException;
-import queue.LinkedQueue;
+
+import Queue.Queue;
+import exceptions.UnsupportedDataTypeException;
 
 /**
  * Estrutura de Dados - 2020-2021.
@@ -29,7 +30,7 @@ public class SimulationManual implements Comparable {
     /**
      * Array de String que contem o caminho que o Tó Cruz fez na simulação.
      */
-    private LinkedQueue<imf.entity.Division> path;
+    private Queue<Division> path;
 
     /**
      * Valor booleano que representa se o Tó Cruz possui ou não o alvo.
@@ -54,7 +55,7 @@ public class SimulationManual implements Comparable {
      * @param target valor booleano que representa se o alvo foi ou não
      * resgatado.
      */
-    public SimulationManual(Double lifePoints, LinkedQueue<imf.entity.Division> path, boolean target) {
+    public SimulationManual(Double lifePoints, Queue<Division> path, boolean target) {
         this.lifePoints = lifePoints;
         this.getTarget = target;
         this.path = path;
@@ -85,7 +86,7 @@ public class SimulationManual implements Comparable {
      *
      * @return o caminho percorrido na Simulação.
      */
-    public LinkedQueue<imf.entity.Division> getPath() {
+    public Queue<Division> getPath() {
         return path;
     }
 
@@ -96,7 +97,7 @@ public class SimulationManual implements Comparable {
      *
      * @param path LinkedQueue que representa o caminho percorrido na Simulação
      */
-    public void setPath(LinkedQueue<imf.entity.Division> path) {
+    public void setPath(Queue<Division> path) {
         this.path = path;
     }
 
@@ -146,7 +147,11 @@ public class SimulationManual implements Comparable {
     @Override
     public int compareTo(Object obj) {
         if (!(obj instanceof Comparable)) {
-            throw new UnsupportedDataTypeException(UnsupportedDataTypeException.NOT_COMPARABLE);
+            try {
+                throw new UnsupportedDataTypeException("UnsupportedDataTypeException.NOT_COMPARABLE");
+            } catch (UnsupportedDataTypeException e) {
+                throw new RuntimeException(e);
+            }
         }
 
         SimulationManual simulation = (SimulationManual) obj;
@@ -168,7 +173,7 @@ public class SimulationManual implements Comparable {
      */
     @Override
     public String toString() {
-        LinkedQueue<imf.entity.Division> path2 = getPath();
+        Queue<Division> path2 = getPath();
         String s = "";
         s += "\n\tPontos de vida: " + lifePoints;
         s += "\n\tAlvo: " + getTarget;

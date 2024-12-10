@@ -3,12 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package imf.entity;
+package entities;
 
-import imf.exception.InvalidTypeException;
-import imf.exception.NullException;
+import exceptions.InvalidTypeException;
+import exceptions.NullException;
+import orderedUnorderedList.ArrayUnorderedList;
+
 import java.util.Arrays;
-import listOrderedUnordered.ArrayUnorderedList;
 
 /**
  * Estrutura de Dados - 2020-2021.
@@ -62,7 +63,7 @@ public class Division {
      * valor boleano que identifica que se trata de uma divisão de entrada ou
      * saída. O array dos inimigos é criado com uma capacidade por defeito, cada
      * elemento do array de inimigos deve ser uma instancia de
-     * {@link imf.entity.Enemy}.O array desordenado que representa as ligações
+     * {}.O array desordenado que representa as ligações
      * da divisão é tambem instanciado mas vazio.
      *
      * @param name String que identifica a divisão.
@@ -82,7 +83,7 @@ public class Division {
      * valor boleano que identifica se a divisão é de entrada ou saída é
      * colocado por defeito a false . O array dos inimigos é criado com uma
      * capacidade por defeito, cada elemento do array de inimigos deve ser uma
-     * instancia de {@link imf.entity.Enemy}.O array desordenado que representa
+     * instancia de {}.O array desordenado que representa
      * as ligações da divisão é tambem instanciado mas vazio.
      *
      * @param name String que identifica a divisão.
@@ -99,7 +100,7 @@ public class Division {
      * Construtor que cria uma divisão. Recebe como parametro o seu nome, o
      * valor boleano que identifica que se trata de uma divisão de entrada ou
      * saída e o array com os inimigos que se encontram na divisão, os inimigos
-     * são instancias da classe {@link imf.entity.Enemy}.O array desordenado que
+     * são instancias da classe {}.O array desordenado que
      * representa as ligações da divisão é tambem instanciado mas vazio.
      *
      * @param name String que identifica a divisão.
@@ -208,19 +209,19 @@ public class Division {
     /**
      * Adiciona um novo inimigo ao array de inimigos que a divisão possui.
      *
-     * @param newEnemy novo inimigo instancia da classe {@link imf.entity.Enemy}
+     * @param newEnemy novo inimigo instancia da classe {}
      * @throws NullException caso o inimigo seja do tipo NULL.
      * @throws InvalidTypeException caso o inimigo ja se encontre no array.
      */
     public void addEnemy(Enemy newEnemy) throws NullException, InvalidTypeException {
         if (newEnemy == null) {
-            throw new NullException(NullException.ENEMY_NULL);
+            throw new NullException("");
         }
         if (numEnemies == enemies.length) {
             expandCapacity();
         }
         if (findEnemy(newEnemy.getName()) != -1) {
-            throw new InvalidTypeException(InvalidTypeException.ENEMY_EQUALS);
+            throw new InvalidTypeException("");
         }
         enemies[numEnemies] = newEnemy;
         numEnemies++;

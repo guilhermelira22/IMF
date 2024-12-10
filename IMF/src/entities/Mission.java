@@ -3,15 +3,17 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package imf.entity;
+package entities;
 
 import com.google.gson.annotations.SerializedName;
 import exception.EmptyCollectionException;
+import exceptions.NullException;
 import graph.NetworkMatrix;
-import imf.exception.NullException;
+import orderedUnorderedList.ArrayOrderedList;
+import orderedUnorderedList.ArrayUnorderedList;
+
+
 import java.util.Iterator;
-import listOrderedUnordered.ArrayOrderedList;
-import listOrderedUnordered.ArrayUnorderedList;
 
 /**
  * Estrutura de Dados - 2020-2021.
@@ -46,12 +48,12 @@ public class Mission {
     /**
      * Array Desordenado que representa as entradas ou saidas do edifício.
      */
-    private ArrayUnorderedList<imf.entity.Division> exitEntry;
+    private ArrayUnorderedList<Division> exitEntry;
 
     /**
      * Grafo Pesado(Network ou Rede) que representa o edifício.
      */
-    private NetworkMatrix<imf.entity.Division> building;
+    private NetworkMatrix<Division> building;
 
     /**
      * Array Ordenado onde estão inseridas todas as simulações manuais testadas
@@ -70,7 +72,7 @@ public class Mission {
      * divisao onde se encontra o alvo, bem como o tipo do alvo que se trata,
      * estes dois ultimos parâmetros sao recebidos individualdemente apesar de
      * se tratar de apenas uma varivel de classe, esta faz referencia a classe
-     * {@link imf.entity.Target}.
+     * {}.
      *
      * @param cod codigo da missão.
      * @param version versão da missão.
@@ -86,7 +88,7 @@ public class Mission {
     /**
      * Construtor que cria uma Missão.Recebe como parâmetro o codigo da missão,
      * a sua versão para poder testar varios cenarios e uma instancia da classe
-     * {@link imf.entity.Target} que possui a divisao alvo ou seja a divisao
+     * {} que possui a divisao alvo ou seja a divisao
      * onde se encontra o alvo, bem como o tipo do alvo que se trata.
      *
      * @param cod codigo da missão.
@@ -102,7 +104,7 @@ public class Mission {
     /**
      * Construtor que cria uma Missão.Recebe como parâmetro o codigo da missão,
      * a sua versão para poder testar varios cenarios, uma instancia da classe
-     * {@link imf.entity.Target} que possui a divisao alvo ou seja a divisao
+     * {} que possui a divisao alvo ou seja a divisao
      * onde se encontra o alvo, bem como o tipo do alvo que se trata,recebe
      * tambem uma lista desordenada que representa as possiveis entradas e
      * saidas do edificio por ultimo recebe um grafo pesado(network ou rede) com
@@ -116,7 +118,7 @@ public class Mission {
      * @param building grafo pesado(network ou rede) que representa o edifício
      *
      */
-    public Mission(String cod, Integer version, Target target, ArrayUnorderedList<imf.entity.Division> exitEntry, NetworkMatrix<imf.entity.Division> building) {
+    public Mission(String cod, Integer version, Target target, ArrayUnorderedList<Division> exitEntry, NetworkMatrix<Division> building) {
         this.cod = cod;
         this.version = version;
         this.target = target;
@@ -131,7 +133,7 @@ public class Mission {
      *
      * @return um array ordenado que possui as entradas e saidas do grafo.
      */
-    public ArrayUnorderedList<imf.entity.Division> getExitEntry() {
+    public ArrayUnorderedList<Division> getExitEntry() {
         return this.exitEntry;
     }
 
@@ -142,7 +144,7 @@ public class Mission {
      * @return o grafo pesado(network ou grafo) que possui as divisões e as
      * ligações entre estas.
      */
-    public NetworkMatrix<imf.entity.Division> getBuilding() {
+    public NetworkMatrix<Division> getBuilding() {
         return building;
     }
 
@@ -183,7 +185,7 @@ public class Mission {
     }
 
     /**
-     * Retorna o alvo da missão instancia da classe {@link imf.entity.Target}.
+     * Retorna o alvo da missão instancia da classe {}.
      *
      * @return alvo da missão.
      */
@@ -193,7 +195,7 @@ public class Mission {
 
     /**
      * Altera o alvo da missão, este deve ser da instancia da classe
-     * {@link imf.entity.Target}.
+     * {}.
      *
      * @param target novo alvo da missão.
      *
@@ -204,7 +206,7 @@ public class Mission {
 
     /**
      * Altera o alvo da missão. Recebe como parâmetro as variaveis da classe
-     * {@link imf.entity.Target}.
+     * {}.
      *
      * @param division divisão alvo.
      * @param type tipo do alvo.
@@ -216,7 +218,7 @@ public class Mission {
     /**
      * Retorna a lista ordenada que contém todas as simulações manuais
      * efetuadas, a lista ordenadas possui instancias da classe
-     * {@link imf.entity.SimulationManual}.
+     * {}.
      *
      * @return a lista ordenada que contém todas as simulações manuais
      * efetuadas.
@@ -234,7 +236,7 @@ public class Mission {
      */
     public void addSimulation(SimulationManual simulation) throws NullException {
         if (simulation == null) {
-            throw new NullException(NullException.SIMULATION_NULL);
+            throw new NullException("");
         }
 
         this.simulation.add(simulation);
@@ -244,7 +246,7 @@ public class Mission {
      * Verifica se a missão possui um formato valido. Para a missao ser valida o
      * cod têm de ser diferente de nulo e não pode estar em branco.A versão deve
      * ser diferente de nula e superior a 0. A instancia da classe
-     * {@link imf.entity.Target} tem de ser tambem valida
+     * {} tem de ser tambem valida
      *
      * @return verdadeiro se a missão for valida, falso caso contrario.
      */
@@ -259,9 +261,9 @@ public class Mission {
      *
      * @return a divisão alvo num formato da classe {@link imf.entity.Division}
      */
-    public imf.entity.Division getTargetDivision() {
-        Iterator<imf.entity.Division> targetDivision = this.building.iteratorBFS(this.building.getFirst());
-        imf.entity.Division current = null;
+    public Division getTargetDivision() {
+        Iterator<Division> targetDivision = this.building.iteratorBFS(this.building.getFirst());
+        Division current = null;
 
         while (targetDivision.hasNext()) {
             current = targetDivision.next();
@@ -287,9 +289,9 @@ public class Mission {
      * @return caso encontre a divisão esta é retornada, se não é retornada uma
      * divisão nula.
      */
-    public imf.entity.Division getDivisionExitEntry(String div) {
-        Iterator<imf.entity.Division> divisionExitEntry = this.exitEntry.iterator();
-        imf.entity.Division current = null;
+    public Division getDivisionExitEntry(String div) {
+        Iterator<Division> divisionExitEntry = this.exitEntry.iterator();
+        Division current = null;
 
         while (divisionExitEntry.hasNext()) {
             current = divisionExitEntry.next();
@@ -314,9 +316,9 @@ public class Mission {
      * @return caso encontre a divisão esta é retornada, se não é retornada uma
      * divisão nula.
      */
-    public imf.entity.Division getDivision(String div) {
-        Iterator<imf.entity.Division> division = this.building.iteratorBFS(this.building.getFirst());
-        imf.entity.Division current = null;
+    public Division getDivision(String div) {
+        Iterator<Division> division = this.building.iteratorBFS(this.building.getFirst());
+        Division current = null;
 
         while (division.hasNext()) {
             current = division.next();
@@ -343,7 +345,7 @@ public class Mission {
         s += "\t\tTipo:" + this.getTarget().getType() + "\n";
         Integer tam = this.getBuilding().size();
         if (this.getBuilding().isEmpty()) {
-            s += EmptyCollectionException.GRAFO;
+            s += "EmptyCollectionException.GRAFO";
             return s;
         }
 
@@ -362,7 +364,7 @@ public class Mission {
 
         int k = 0;
         while (itBuilding.hasNext()) {
-            imf.entity.Division currentDiv = (imf.entity.Division) itBuilding.next();
+            Division currentDiv = (Division) itBuilding.next();
             s += String.format("%-20s     %-7s", currentDiv.getName(), k);
             for (int j = 0; j < tam; j++) {
                 String resultado = "";
