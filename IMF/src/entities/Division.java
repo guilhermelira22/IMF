@@ -5,6 +5,8 @@
  */
 package entities;
 
+import entities.Enemy;
+import entities.Item;
 import exceptions.InvalidTypeException;
 import exceptions.NullException;
 import orderedUnorderedList.ArrayUnorderedList;
@@ -14,8 +16,8 @@ import java.util.Arrays;
 /**
  * Estrutura de Dados - 2020-2021.
  *
- * @author Mariana Ribeiro - 8190573
- * @author André Raro - 8190590
+ * @author Guilherme Lira - 8210415
+ * @author Miguel Cunha - 8210426
  *
  * Classe Division representa uma divisão do edifício na missão do Tó Cruz. A
  * divisão pode conter inimigos e possuir caminhos para outras divisões.
@@ -52,6 +54,8 @@ public class Division {
      */
     private ArrayUnorderedList<String> edges;
 
+    private Item item;
+
     /**
      * Construtor vazio que cria uma divisão.
      */
@@ -76,6 +80,7 @@ public class Division {
         this.enemies = new Enemy[DEFAULT_CAPACITY];
         this.numEnemies = 0;
         this.edges = new ArrayUnorderedList<>();
+        this.item = null;
     }
 
     /**
@@ -193,6 +198,14 @@ public class Division {
      */
     public Integer sizeEnemies() {
         return numEnemies;
+    }
+
+    public void setItem(Item item) {
+        this.item = item;
+    }
+
+    public Item getItem() {
+        return item;
     }
 
     /**
