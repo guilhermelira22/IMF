@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="EDCollection">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../EDCollection/EDCollection/out/artifacts/EDCollection_jar/EDCollection.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
