@@ -29,7 +29,7 @@ public class SimulationManual implements Comparable {
     /**
      * Array de String que contem o caminho que o Tó Cruz fez na simulação.
      */
-    private LinkedQueue<imf.entity.Division> path;
+    private LinkedQueue<Division> path;
 
     /**
      * Valor booleano que representa se o Tó Cruz possui ou não o alvo.

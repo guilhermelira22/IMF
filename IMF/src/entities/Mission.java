@@ -116,7 +116,7 @@ public class Mission {
      * @param building grafo pesado(network ou rede) que representa o edifício
      *
      */
-    public Mission(String cod, Integer version, Target target, ArrayUnorderedList<imf.entity.Division> exitEntry, NetworkMatrix<imf.entity.Division> building) {
+    public Mission(String cod, Integer version, imf.entity.Target target, ArrayUnorderedList<imf.entity.Division> exitEntry, NetworkMatrix<imf.entity.Division> building) {
         this.cod = cod;
         this.version = version;
         this.target = target;
@@ -314,7 +314,7 @@ public class Mission {
      * @return caso encontre a divisão esta é retornada, se não é retornada uma
      * divisão nula.
      */
-    public imf.entity.Division getDivision(String div) {
+    public Division getDivision(String div) {
         Iterator<imf.entity.Division> division = this.building.iteratorBFS(this.building.getFirst());
         imf.entity.Division current = null;
 
