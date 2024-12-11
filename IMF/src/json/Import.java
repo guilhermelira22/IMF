@@ -108,7 +108,7 @@ public class Import {
 
         for (int i = 0; i < itemsArray.size(); i++) {
             JsonObject itemObject = itemsArray.get(i).getAsJsonObject();
-            String division = itemObject.get("divisao").getAsString();
+            String division_name = itemObject.get("divisao").getAsString();
             double amount = 0;
             if (itemObject.has("pontos-recuperados")) {
                 amount = itemObject.get("pontos-recuperados").getAsDouble();
@@ -129,6 +129,7 @@ public class Import {
                     throw new InvalidFileException("Tipo de item desconhecido: " + typeStr);
             }
 
+            Division division = new Division(division_name);
             items[i] = new Item(amount, type, division);
             if(!items[i].isValid()) {
                 throw new InvalidFileException("Items are invalid");

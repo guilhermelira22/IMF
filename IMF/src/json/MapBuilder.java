@@ -12,6 +12,7 @@ import entities.SimulationManual;
 import exceptions.InvalidFileException;
 import exceptions.InvalidTypeException;
 import exceptions.NullException;
+import graph.GraphMatrix;
 import graph.NetworkMatrix;
 import orderedUnorderedList.ArrayUnorderedList;
 
@@ -29,7 +30,7 @@ public class MapBuilder extends Import{
     private String[][] edges;
     private Item[] items;
     private ArrayUnorderedList<Division> entriesExits;
-    private NetworkMatrix<Division> building;
+    private GraphMatrix<Division> building;
 
     public MapBuilder(String file) throws FileNotFoundException, InvalidFileException, NullException, InvalidTypeException {
         super(file);
@@ -39,7 +40,7 @@ public class MapBuilder extends Import{
         this.items = importItems();
         this.edges = importEdges();
         this.entriesExits = importEntryExits();
-        this.building = new NetworkMatrix<>();
+        this.building = new GraphMatrix<>();
         createBuilding();
     }
 
@@ -96,8 +97,8 @@ public class MapBuilder extends Import{
                 if(divisions[i].getName().equals(edges[j][0])){
                     for(int k=0; k<divisions.length; k++){
                         if(divisions[k].getName().equals(edges[j][1])){
-                            building.addEdge(divisions[i], divisions[k], divisions[k].getEnemiesPower());
-                            building.addEdge(divisions[k], divisions[i], divisions[i].getEnemiesPower());
+                            building.addEdge(divisions[i], divisions[k]);
+                            building.addEdge(divisions[k], divisions[i]);
                             divisions[k].getEdges().addToRear(edges[j][0]);
                             divisions[i].getEdges().addToFront(edges[j][1]);
                         }
