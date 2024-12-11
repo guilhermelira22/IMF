@@ -11,9 +11,9 @@ public class Item {
     private Item_Type type;
 
     @SerializedName(value = "division", alternate = {"divisao"})
-    private Division division;
+    private String division;
 
-    public Item(double amount, Item_Type type, Division division) {
+    public Item(double amount, Item_Type type, String division) {
         this.amount = amount;
         this.type = type;
         this.division = division;
@@ -34,5 +34,37 @@ public class Item {
 
     public void setItemType(Item_Type type) {
         this.type = type;
+    }
+
+
+    public String getDivision() {
+        return this.division;
+    }
+
+    public void setDivision(String division) {
+        this.division = division;
+    }
+
+    public boolean isValid() {
+        return this.amount > 0 && this.division != null && this.type != null;
+    }
+
+    public static boolean isValid(Item[] items){
+        if(items.length == 0){
+            return false;
+        }
+
+        for(Item item : items){
+            if(!item.isValid()){
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "Item{" + "type:" + type + ", points:" + amount + '}';
     }
 }
