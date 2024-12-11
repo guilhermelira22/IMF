@@ -11,9 +11,9 @@ public class Item {
     private Item_Type type;
 
     @SerializedName(value = "division", alternate = {"divisao"})
-    private String division;
+    private Division division;
 
-    public Item(double amount, Item_Type type, String division) {
+    public Item(double amount, Item_Type type, Division division) {
         this.amount = amount;
         this.type = type;
         this.division = division;
@@ -37,11 +37,11 @@ public class Item {
     }
 
 
-    public String getDivision() {
+    public Division getDivision() {
         return this.division;
     }
 
-    public void setDivision(String division) {
+    public void setDivision(Division division) {
         this.division = division;
     }
 
