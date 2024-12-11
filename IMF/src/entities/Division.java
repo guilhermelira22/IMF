@@ -323,6 +323,6 @@ public class Division {
      */
     @Override
     public String toString() {
-        return "Divisão{" + "nome: " + name + ", SaidaOuEntrada: " + entryExit + ", Inimigos: " + Arrays.toString(enemies) + ", numInimigos: " + numEnemies + ", ligações: " + edges.toString() + '}';
+        return "Divisão{" + "nome: " + name + ", SaidaOuEntrada: " + entryExit + ", Inimigos: " + Arrays.toString(enemies) + ", numInimigos: " + numEnemies + ", ligações: " + edges.toString() + "item: "+ (item != null ? item.toString() : "null") +'}';
     }
 }
