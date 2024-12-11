@@ -1,10 +1,7 @@
 package json;
 
 import com.google.gson.*;
-import entities.Item;
-import entities.Division;
-import entities.Enemy;
-import netscape.javascript.JSObject;
+import entities.*;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -46,12 +43,15 @@ public class Import {
         JsonObject target = map.get("target").getAsJsonObject();
 
         try{
-            mission = new Gson().fromJson(target, imf.entity.Mission.class);
+            mission = new Gson().fromJson(target, Mission.class);
+        } catch (Exception e) {
+            throw new FileNotFoundException("file not found");
         }
+        return null;
     }
 
     public Division[] importDivisions() throws FileNotFoundException{
         JsonArray divisionsArray = map.getAsJsonArray("edificio");
-
+        return null;
     }
 }

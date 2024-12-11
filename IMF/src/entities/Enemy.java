@@ -19,6 +19,7 @@ import com.google.gson.annotations.SerializedName;
  */
 public class Enemy {
 
+    private static final Double LIFE_DEFAULT = 100.0;
     /**
      * String, que representa o name do Inimigo.
      */
@@ -36,6 +37,8 @@ public class Enemy {
      */
     @SerializedName(value = "division", alternate = {"divisao"})
     private String division;
+
+    private Double lifePoints;
 
     /**
      * Construtor vazio para o inimigo.
@@ -57,6 +60,7 @@ public class Enemy {
         } else {
             this.power = 0.0;
         }
+        lifePoints = LIFE_DEFAULT;
     }
 
     /**
@@ -77,6 +81,7 @@ public class Enemy {
             this.power = 0.0;
         }
         this.division = division;
+        lifePoints = LIFE_DEFAULT;
     }
 
     /**
@@ -137,6 +142,14 @@ public class Enemy {
      */
     public void setDivision(String division) {
         this.division = division;
+    }
+
+    public Double getLifePoints() {
+        return lifePoints;
+    }
+
+    public void setLifePoints(Double lifePoints) {
+        this.lifePoints = lifePoints;
     }
 
     /**

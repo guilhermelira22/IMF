@@ -30,7 +30,7 @@ public class SimulationManual implements Comparable {
     /**
      * Array de String que contem o caminho que o Tó Cruz fez na simulação.
      */
-    private LinkedQueue<Division> path;
+    private Queue<Division> path;
 
 
     /**
