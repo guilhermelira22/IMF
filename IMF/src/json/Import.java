@@ -9,6 +9,7 @@ import graph.NetworkMatrix;
 import netscape.javascript.JSObject;
 import orderedUnorderedList.ArrayUnorderedList;
 
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -88,6 +89,7 @@ public class Import {
         } catch (Exception e) {
             throw new InvalidFileException("mission is invalid");
         }
+        return null;
     }
 
     public Division[] importDivisions() throws FileNotFoundException, InvalidFileException, NullException, InvalidTypeException {

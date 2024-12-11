@@ -5,8 +5,6 @@
  */
 package entities;
 
-import entities.Enemy;
-import entities.Item;
 import exceptions.InvalidTypeException;
 import exceptions.NullException;
 import orderedUnorderedList.ArrayUnorderedList;
