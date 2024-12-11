@@ -323,6 +323,14 @@ public class Division {
      */
     @Override
     public String toString() {
-        return "Divisão{" + "nome: " + name + ", SaidaOuEntrada: " + entryExit + ", Inimigos: " + Arrays.toString(enemies) + ", numInimigos: " + numEnemies + ", ligações: " + edges.toString() + "item: "+ (item != null ? item.toString() : "null") +'}';
+        String enemiesString = "[";
+        for (int i = 0; i < numEnemies; i++) {
+            enemiesString += "{nome: " + enemies[i].getName() + ", poder: " + enemies[i].getPower() + "}";
+            if (i < numEnemies - 1) {
+                enemiesString += ", ";
+            }
+        }
+        enemiesString += "]";
+        return "Divisão{" + "nome: " + name + ", SaidaOuEntrada: " + entryExit + ", Inimigos: " + enemiesString + ", numInimigos: " + numEnemies + ", ligações: " + edges.toString() + "item: "+ (item != null ? item.toString() : "null") +'}';
     }
 }

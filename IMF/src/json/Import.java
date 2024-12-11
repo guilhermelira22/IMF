@@ -75,8 +75,6 @@ public class Import {
             String divisionName = divisionsArray.get(i).getAsString();
             building[i] = new Division(divisionName);
         }
-        setEntryExits(building, importEntryExits());
-        setItems(building, importItems());
         return building;
     }
 
@@ -94,31 +92,18 @@ public class Import {
             for(int j = 0; j < building.length; j++) {
                 if(building[j].getName().equals(division_name)) {
                     enemies[i] = new Enemy(enemy_name, power, building[j]);
+                    building[j].addEnemy(enemies[i]);
 
                     if(!enemies[i].isValid()) {
                         throw new InvalidFileException("Enemies are invalid");
                     }
                 }
             }
-
-
         }
-        building[2].addEnemy(enemies[1]);
         return enemies;
     }
 
-
-    protected void setEnemies (Division[] building, Enemy[] enemies) throws NullException, InvalidTypeException {
-        for(int i = 0; i < building.length; i++) {
-            for(int j = 0; j < enemies.length; j++) {
-                if(building[i].getName().equals(enemies[j].getDivision().getName())) {
-                    building[i].addEnemy(enemies[j]);
-                }
-            }
-        }
-    }
-
-    public Item[] importItems() throws InvalidFileException{
+    public Item[] importItems(Division[] building) throws InvalidFileException{
         JsonArray itemsArray = map.getAsJsonArray("itens");
 
         Item[] items = new Item[itemsArray.size()];
@@ -146,37 +131,37 @@ public class Import {
                     throw new InvalidFileException("Tipo de item desconhecido: " + typeStr);
             }
 
-            Division division = new Division(division_name);
-            items[i] = new Item(amount, type, division);
-            if(!items[i].isValid()) {
-                throw new InvalidFileException("Items are invalid");
+            for(int j = 0; j < building.length; j++) {
+                if(building[j].getName().equals(division_name)) {
+                    items[i] = new Item(amount, type, building[j]);
+                    building[j].setItem(items[i]);
+
+                    if(!items[i].isValid()) {
+                        throw new InvalidFileException("Items are invalid");
+                    }
+                }
             }
         }
 
         return items;
     }
 
-    protected void setItems (Division[] building, Item[] items){
-        for(int i = 0; i < building.length; i++) {
-            for(int j = 0; j < items.length; j++) {
-                if(building[i].getName().equals(items[j].getDivision().getName())) {
-                    building[i].setItem(items[j]);
-                }
-            }
-        }
-    }
 
-    public ArrayUnorderedList<Division> importEntryExits() throws InvalidFileException{
+    public ArrayUnorderedList<Division> importEntryExits(Division[] building) throws InvalidFileException{
         JsonArray divisionsArray = map.getAsJsonArray("entradas-saidas");
         ArrayUnorderedList <Division> entriesExits= new ArrayUnorderedList<>();
 
-
         for (int i = 0; i < divisionsArray.size(); i++) {
-            Division div = new Division(divisionsArray.get(i).getAsString());
-            entriesExits.addToRear(div);
+            String division_name = divisionsArray.get(i).getAsString();
+
+            for (Division division : building) {
+                if (division.getName().equals(division_name)) {
+                    division.setEntryExit();
+                    entriesExits.addToRear(division);
+                }
+            }
 
         }
-
         return entriesExits;
     }
 

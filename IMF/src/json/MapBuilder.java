@@ -37,9 +37,9 @@ public class MapBuilder extends Import{
         this.file = file;
         this.divisions = importDivisions();
         this.enemies = importEnemies(this.divisions);
-        this.items = importItems();
+        this.items = importItems(this.divisions);
         this.edges = importEdges();
-        this.entriesExits = importEntryExits();
+        this.entriesExits = importEntryExits(this.divisions);
         this.building = new GraphMatrix<>();
         createBuilding();
     }
@@ -138,7 +138,8 @@ public class MapBuilder extends Import{
                 count++;
             }
         }
-        return (count != entriesExits.size());
+
+        return (count == entriesExits.size());
     }
 
     public boolean isDivisionEdgesValid(){
