@@ -36,7 +36,7 @@ public class Enemy {
      * String, que representa a division onde o Inimigo se encontra.
      */
     @SerializedName(value = "division", alternate = {"divisao"})
-    private String division;
+    private Division division;
 
     private String inicialDivision;
 
@@ -75,7 +75,7 @@ public class Enemy {
      * @param division string que representa o nome da divisão onde se encontra
      * o inimigo.
      */
-    public Enemy(String name, Double power, String division) {
+    public Enemy(String name, Double power, Division division) {
         this.name = name;
         if (power > 0) {
             this.power = power;
@@ -132,7 +132,7 @@ public class Enemy {
      * @return a string que representa o nome da divisão onde se encontra o
      * inimigo.
      */
-    public String getDivision() {
+    public Division getDivision() {
         return division;
     }
 
@@ -142,7 +142,7 @@ public class Enemy {
      *
      * @param division nova divisão do inimigo.
      */
-    public void setDivision(String division) {
+    public void setDivision(Division division) {
         this.division = division;
     }
 
@@ -166,7 +166,7 @@ public class Enemy {
      * @return verdadeiro se o inimigo for valido, falso caso contrario.
      */
     public boolean isValid() {
-        return (this.name != null && !this.name.isBlank() && this.division != null && !this.division.isBlank() && this.power != null && this.power >= 0);
+        return (this.name != null && !this.name.isBlank() && this.division != null && !this.division.getName().isBlank() && this.power != null && this.power >= 0);
     }
 
     /**

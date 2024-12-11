@@ -8,6 +8,7 @@ package entities;
 import com.google.gson.annotations.SerializedName;
 import exception.EmptyCollectionException;
 import exceptions.NullException;
+import graph.GraphMatrix;
 import graph.NetworkMatrix;
 import orderedUnorderedList.ArrayOrderedList;
 import orderedUnorderedList.ArrayUnorderedList;
@@ -53,7 +54,7 @@ public class Mission {
     /**
      * Grafo Pesado(Network ou Rede) que representa o edifício.
      */
-    private NetworkMatrix<Division> building;
+    private GraphMatrix<Division> building;
 
     /**
      * Array Ordenado onde estão inseridas todas as simulações manuais testadas
@@ -79,7 +80,7 @@ public class Mission {
      * @param division divisão alvo.
      * @param type tipo do alvo.
      */
-    public Mission(String cod, Integer version, String division, String type) {
+    public Mission(String cod, Integer version, Division division, String type) {
         this.cod = cod;
         this.version = version;
         this.target = new Target(division, type);
@@ -118,7 +119,7 @@ public class Mission {
      * @param building grafo pesado(network ou rede) que representa o edifício
      *
      */
-    public Mission(String cod, Integer version, Target target, ArrayUnorderedList<Division> exitEntry, NetworkMatrix<Division> building) {
+    public Mission(String cod, Integer version, Target target, ArrayUnorderedList<Division> exitEntry, GraphMatrix<Division> building) {
         this.cod = cod;
         this.version = version;
         this.target = target;
@@ -144,7 +145,7 @@ public class Mission {
      * @return o grafo pesado(network ou grafo) que possui as divisões e as
      * ligações entre estas.
      */
-    public NetworkMatrix<Division> getBuilding() {
+    public GraphMatrix<Division> getBuilding() {
         return building;
     }
 
@@ -211,7 +212,7 @@ public class Mission {
      * @param division divisão alvo.
      * @param type tipo do alvo.
      */
-    public void setTarget(String division, String type) {
+    public void setTarget(Division division, String type) {
         this.target = new Target(division, type);
     }
 
@@ -407,7 +408,7 @@ public class Mission {
         Iterator itBuilding = this.getBuilding().iteratorBFS(this.getBuilding().getFirst());
 
         int k = 0;
-        while (itBuilding.hasNext()) {
+        /*while (itBuilding.hasNext()) {
             Division currentDiv = (Division) itBuilding.next();
             s += String.format("%-20s     %-7s", currentDiv.getName(), k);
             for (int j = 0; j < tam; j++) {
@@ -426,7 +427,7 @@ public class Mission {
             }
             s += "\n";
             k++;
-        }
+        }*/
 
         return s;
     }

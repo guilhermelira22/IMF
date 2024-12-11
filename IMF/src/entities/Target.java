@@ -25,7 +25,7 @@ public class Target {
      * edifício;
      */
     @SerializedName(value = "division", alternate = {"divisao"})
-    private String division;
+    private Division division;
 
     /**
      * Representa o tipo do alvo que se deseja resgatar na missão.
@@ -46,7 +46,7 @@ public class Target {
      * @param division divisão alvo.
      * @param type tipo do alvo.
      */
-    public Target(String division, String type) {
+    public Target(Division division, String type) {
         this.division = division;
         this.type = type;
     }
@@ -56,7 +56,7 @@ public class Target {
      *
      * @return String divisão alvo
      */
-    public String getDivision() {
+    public Division getDivision() {
         return division;
     }
 
@@ -86,7 +86,7 @@ public class Target {
      * @return verdadeiro se o alvo for valido, falso caso contrario.
      */
     public boolean isValid() {
-        return (this.division != null && !this.division.isBlank() && this.type != null && !this.type.isBlank());
+        return (this.division != null && !this.division.getName().isBlank() && this.type != null && !this.type.isBlank());
 
     }
 

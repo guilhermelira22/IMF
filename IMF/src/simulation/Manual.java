@@ -4,6 +4,8 @@ import Queue.Queue;
 import entities.*;
 import exceptions.InvalidFileException;
 import exceptions.NullException;
+import graph.GraphMatrix;
+import graph.NetworkMatrix;
 import json.Import;
 import orderedUnorderedList.ArrayUnorderedList;
 import stack.LinkedStack;
@@ -78,7 +80,7 @@ public class Manual {
     }
 
     private void playGame() {
-        String target = mission.getTarget().getDivision();
+        Division target = mission.getTarget().getDivision();
 
         while (lifePoints > 0 && !flagLeft) {
             showOptions();
@@ -105,6 +107,7 @@ public class Manual {
         boolean validChoice = false;
         while (!validChoice) {
             String choice = scan.nextLine();
+
             if (currentDiv.getEdges().contains(choice) && mission.getDivision(choice).getEnemies() == null) {
                 currentDiv = mission.getDivision(choice);
                 path.enqueue(currentDiv);
@@ -178,7 +181,7 @@ public class Manual {
         }
     }
 
-    private void checkMissionStatus(String target) {
+    private void checkMissionStatus(Division target) {
         if (lifePoints <= 0) {
             System.out.println("Missão falhou! Tó Cruz perdeu toda a vida.");
             flagLeft = true;
@@ -200,11 +203,11 @@ public class Manual {
 
     private void moveEnemies() {
         for (Enemy enemy : mission.getAllEnemies()) {
-            Division currentDivision = mission.getDivision(enemy.getDivision());
+            Division currentDivision = mission.getDivision(enemy.getDivision().getName());
             Division[] reachableDivisions = getReachableDivisions(currentDivision.getName(), 2);
             if (reachableDivisions != null && reachableDivisions.length > 0) {
                 Division newDivision = getRandomDivision(reachableDivisions);
-                enemy.setDivision(newDivision.getName());
+                enemy.setDivision(newDivision);
             }
         }
     }
@@ -254,22 +257,18 @@ public class Manual {
 
         System.out.println("Kits médicos:");
         for (Item kit : mission.getAllItems()) {
-            // Exibir a divisão onde o kit médico está localizado
-            System.out.println("Kit médico em " + kit.getDivision().getName());
+            System.out.println("Kit médico em " + kit.getDivision());
         }
 
-        // Exibir coletes em tempo real
         System.out.println("Coletes:");
-        for (Vest vest : mission.getVests()) {
-            // Exibir a divisão onde o colete está localizado
-            System.out.println("Colete em " + vest.getDivision().getName());
+        for (Item vest : mission.getAllItems()) {
+            System.out.println("Colete em " + vest.getDivision());
         }
 
-        // Mostrar melhores caminhos para o alvo e o kit mais próximo
-        String bestPathForTarget = getBestPathToTarget();  // Método que retorna o melhor caminho para o alvo
-        String bestPathForKit = getBestPathToClosestKit();  // Método que retorna o melhor caminho para o kit médico mais próximo
+        GraphMatrix<Division> shortestPath = mission.getBuilding();
+        String bestPathForTarget = shortestPath.iteratorShortestPath(currentDiv, mission.getTarget().getDivision());
+        String bestPathForKit = shortestPath.iteratorShortestPath(currentDiv.getName(), );
 
-        // Exibir os melhores caminhos
         System.out.println("Melhor caminho para o alvo: " + bestPathForTarget);
         System.out.println("Melhor caminho para o kit médico mais próximo: " + bestPathForKit);
     }
