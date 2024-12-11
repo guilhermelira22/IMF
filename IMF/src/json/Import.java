@@ -89,7 +89,6 @@ public class Import {
         } catch (Exception e) {
             throw new InvalidFileException("mission is invalid");
         }
-        return null;
     }
 
     public Division[] importDivisions() throws FileNotFoundException, InvalidFileException, NullException, InvalidTypeException {
