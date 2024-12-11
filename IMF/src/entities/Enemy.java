@@ -23,19 +23,16 @@ public class Enemy {
     /**
      * String, que representa o name do Inimigo.
      */
-    @SerializedName(value = "name", alternate = {"nome"})
     private String name;
 
     /**
      * Integer, que representa o power(dano) do Inimigo.
      */
-    @SerializedName(value = "power", alternate = {"poder"})
     private Double power;
 
     /**
      * String, que representa a division onde o Inimigo se encontra.
      */
-    @SerializedName(value = "division", alternate = {"divisao"})
     private Division division;
 
     private String inicialDivision;

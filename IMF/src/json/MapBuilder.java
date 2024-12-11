@@ -110,7 +110,7 @@ public class MapBuilder extends Import{
 
     public boolean isTargetDivisionValid(Mission m) {
         for (int i = 0; i < divisions.length; i++) {
-            if (m.getTarget().getDivision().equals(divisions[i].getName())) {
+            if (m.getTarget().getDivision().getName().equals(divisions[i].getName())) {
                 return true;
             }
         }

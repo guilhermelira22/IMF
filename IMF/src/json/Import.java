@@ -51,7 +51,17 @@ public class Import {
 
     public Mission importMission() throws InvalidFileException {
         try {
-            Mission mission = new Gson().fromJson(map, Mission.class);
+            String mission_name = map.get("cod-missao").getAsString();
+            Integer mission_version = map.get("versao").getAsInt();
+
+            JsonObject targetObject = map.get("alvo").getAsJsonObject();
+            String division_name = targetObject.get("divisao").getAsString();
+            String target_type = targetObject.get("tipo").getAsString();
+
+            Division target_division = new Division(division_name);
+            Target missionTarget = new Target (target_division, target_type);
+
+            Mission mission = new Mission(mission_name, mission_version, missionTarget);
             if (!mission.isValid()) {
                 throw new InvalidFileException("mission is invalid");
             }
@@ -81,11 +91,16 @@ public class Import {
         Enemy[] enemies = new Enemy[enemiesArray.size()];
 
         for (int i = 0; i < enemiesArray.size(); i++) {
-            enemies[i] = new Gson().fromJson(enemiesArray.get(i), Enemy.class);
-        }
+            JsonObject enemiesObject = enemiesArray.get(i).getAsJsonObject();
+            String enemy_name = enemiesObject.get("nome").getAsString();
+            Double power = enemiesObject.get("poder").getAsDouble();
+            String division_name = enemiesObject.get("divisao").getAsString();;
 
-        if(!Enemy.isValid(enemies)) {
-            throw new InvalidFileException("Enemies are invalid");
+            Division division = new Division(division_name);
+            enemies[i] = new Enemy(enemy_name, power, division);
+            if(!enemies[i].isValid()) {
+                throw new InvalidFileException("Enemies are invalid");
+            }
         }
 
         return enemies;
@@ -94,7 +109,7 @@ public class Import {
     protected void setEnemies (Division[] building, Enemy[] enemies) throws NullException, InvalidTypeException {
         for(int i = 0; i < building.length; i++) {
             for(int j = 0; j < enemies.length; j++) {
-                if(building[i].getName().equals(enemies[j].getDivision())) {
+                if(building[i].getName().equals(enemies[j].getDivision().getName())) {
                     building[i].addEnemy(enemies[j]);
                 }
             }
@@ -142,7 +157,7 @@ public class Import {
     protected void setItems (Division[] building, Item[] items){
         for(int i = 0; i < building.length; i++) {
             for(int j = 0; j < items.length; j++) {
-                if(building[i].getName().equals(items[j].getDivision())) {
+                if(building[i].getName().equals(items[j].getDivision().getName())) {
                     building[i].setItem(items[j]);
                 }
             }
