@@ -255,11 +255,11 @@ public class Mission {
     }
 
     /**
-     * Retorna a divisão alvo num formato da classe {@link imf.entity.Division}.
+     * Retorna a divisão alvo num formato da classe {}.
      * É feita uma comparação entre strings visto que a divisão alvo apenas
      * contem o nome da divisão guardado,
      *
-     * @return a divisão alvo num formato da classe {@link imf.entity.Division}
+     * @return a divisão alvo num formato da classe {}
      */
     public Division getTargetDivision() {
         Iterator<Division> targetDivision = this.building.iteratorBFS(this.building.getFirst());
@@ -327,6 +327,50 @@ public class Mission {
             }
         }
         return null;
+    }
+
+    public ArrayUnorderedList<Division> getDivisions() {
+        Iterator<Division> divisionIterator = this.building.iteratorBFS(this.building.getFirst());
+        ArrayUnorderedList<Division> divisions = new ArrayUnorderedList<>();
+
+        while (divisionIterator.hasNext()) {
+            divisions.addToRear(divisionIterator.next());
+        }
+
+        return divisions;
+    }
+
+    public ArrayUnorderedList<Enemy> getAllEnemies() {
+        ArrayUnorderedList<Enemy> allEnemies = new ArrayUnorderedList<>();
+
+        ArrayUnorderedList<Division> divisions = getDivisions();
+
+        for (Division division : divisions) {
+            Enemy[] enemies = division.getEnemies();
+            if (enemies != null) {
+                for (Enemy enemy : enemies) {
+                    if (enemy.getLifePoints() > 0) {
+                        allEnemies.addToRear(enemy);
+                    }
+                }
+            }
+        }
+
+        return allEnemies;
+    }
+
+    public ArrayUnorderedList<Item> getAllItems() {
+        ArrayUnorderedList<Item> allItems = new ArrayUnorderedList<>();
+
+        ArrayUnorderedList<Division> divisions = getDivisions();
+
+        for (Division division : divisions) {
+            Item items = division.getItem();
+            if (items != null) {
+                allItems.addToRear(items);
+            }
+        }
+        return allItems;
     }
 
     /**

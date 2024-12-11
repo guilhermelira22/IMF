@@ -4,9 +4,13 @@ import Queue.Queue;
 import entities.*;
 import exceptions.InvalidFileException;
 import exceptions.NullException;
+import json.Import;
+import orderedUnorderedList.ArrayUnorderedList;
 import stack.LinkedStack;
 
+import java.util.Arrays;
 import java.util.Iterator;
+import java.util.Random;
 import java.util.Scanner;
 
 public class Manual {
@@ -195,7 +199,79 @@ public class Manual {
     }
 
     private void moveEnemies() {
+        for (Enemy enemy : mission.getAllEnemies()) {
+            Division currentDivision = mission.getDivision(enemy.getDivision());
+            Division[] reachableDivisions = getReachableDivisions(currentDivision.getName(), 2);
+            if (reachableDivisions != null && reachableDivisions.length > 0) {
+                Division newDivision = getRandomDivision(reachableDivisions);
+                enemy.setDivision(newDivision.getName());
+            }
+        }
+    }
 
+    public Division[] getReachableDivisions(String initialDivisionName, int maxDepth) {
+        Division[] reachableDivisions = new Division[20];
+        int count = 0;
+
+        Division initialDivision = mission.getDivision(initialDivisionName);
+        Queue<Division> queue = new Queue<Division>();
+        Queue<Integer> depths = new Queue<Integer>();
+
+        queue.enqueue(initialDivision);
+        depths.enqueue(0);
+
+        while (!queue.isEmpty()) {
+            Division current = queue.dequeue();
+            int depth = depths.dequeue();
+
+            if (!current.equals(initialDivision) && count < reachableDivisions.length) {
+                reachableDivisions[count++] = current;
+            }
+
+            if (depth < maxDepth) {
+                ArrayUnorderedList<String> edges = current.getEdges();
+                for (String edge : edges) {
+                    Division neighbor = mission.getDivision(edge);
+                    queue.enqueue(neighbor);
+                    depths.enqueue(depth + 1);
+                }
+            }
+        }
+
+        return Arrays.copyOf(reachableDivisions, count);
+    }
+
+    public Division getRandomDivision(Division[] reachableDivisions) {
+        int randomIndex = (int) (Math.random() * reachableDivisions.length);
+        return reachableDivisions[randomIndex];
+    }
+
+    private void showRealTimeInfo() {
+        System.out.println("Inimigos:");
+        for (Enemy enemy : mission.getAllEnemies()) {
+            System.out.println("Inimigo em " + enemy.getDivision());
+        }
+
+        System.out.println("Kits médicos:");
+        for (Item kit : mission.getAllItems()) {
+            // Exibir a divisão onde o kit médico está localizado
+            System.out.println("Kit médico em " + kit.getDivision().getName());
+        }
+
+        // Exibir coletes em tempo real
+        System.out.println("Coletes:");
+        for (Vest vest : mission.getVests()) {
+            // Exibir a divisão onde o colete está localizado
+            System.out.println("Colete em " + vest.getDivision().getName());
+        }
+
+        // Mostrar melhores caminhos para o alvo e o kit mais próximo
+        String bestPathForTarget = getBestPathToTarget();  // Método que retorna o melhor caminho para o alvo
+        String bestPathForKit = getBestPathToClosestKit();  // Método que retorna o melhor caminho para o kit médico mais próximo
+
+        // Exibir os melhores caminhos
+        System.out.println("Melhor caminho para o alvo: " + bestPathForTarget);
+        System.out.println("Melhor caminho para o kit médico mais próximo: " + bestPathForKit);
     }
 
     private String getFinalPath() {

@@ -38,6 +38,8 @@ public class Enemy {
     @SerializedName(value = "division", alternate = {"divisao"})
     private String division;
 
+    private String inicialDivision;
+
     private Double lifePoints;
 
     /**
@@ -142,6 +144,10 @@ public class Enemy {
      */
     public void setDivision(String division) {
         this.division = division;
+    }
+
+    public String getInicialDivision() {
+        return inicialDivision;
     }
 
     public Double getLifePoints() {
