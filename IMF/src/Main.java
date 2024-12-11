@@ -5,6 +5,8 @@ import exceptions.InvalidTypeException;
 import exceptions.NullException;
 import json.Import;
 import json.MapBuilder;
+import menu.Menu;
+import simulation.Manual;
 
 import java.io.FileNotFoundException;
 
@@ -14,5 +16,9 @@ public class Main {
         Mission mission = map.createMission();
 
         System.out.println(mission.getCod() + " " + mission.getTarget());
+
+        Menu m = new Menu();
+
+        m.mainMenu(mission);
     }
 }
