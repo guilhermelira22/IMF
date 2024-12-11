@@ -4,10 +4,8 @@ import com.google.gson.annotations.SerializedName;
 
 public class Item {
 
-    @SerializedName(value = "amount", alternate = {"pontos-recuperados"})
     private double amount;
 
-    @SerializedName(value = "type", alternate = {"tipo"})
     private Item_Type type;
 
     @SerializedName(value = "division", alternate = {"divisao"})
@@ -47,20 +45,6 @@ public class Item {
 
     public boolean isValid() {
         return this.amount > 0 && this.division != null && this.type != null;
-    }
-
-    public static boolean isValid(Item[] items){
-        if(items.length == 0){
-            return false;
-        }
-
-        for(Item item : items){
-            if(!item.isValid()){
-                return false;
-            }
-        }
-
-        return true;
     }
 
     @Override

@@ -5,13 +5,10 @@ import entities.*;
 import exceptions.InvalidFileException;
 import exceptions.InvalidTypeException;
 import exceptions.NullException;
-import graph.NetworkMatrix;
-import netscape.javascript.JSObject;
 import orderedUnorderedList.ArrayUnorderedList;
 
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 
@@ -20,14 +17,11 @@ public class Import {
     private final String path = "maps/";
     private JsonObject map;
     private Division[] building;
-    private String[] entriesExits;
+    private ArrayUnorderedList<Division> entriesExits;
     private Item[] items;
     private Enemy[] enemies;
     private String[][] edges;
     private Target target;
-
-    private ArrayUnorderedList<Division> entriesExitsList;
-    private NetworkMatrix<Division> buildingNet;
 
 
     public Import(String file) throws FileNotFoundException, InvalidFileException, NullException, InvalidTypeException {
@@ -40,30 +34,6 @@ public class Import {
         this.edges = importEdges();
     }
 
-
-    private void createBuilding(){
-        for(int i=0; i< building.length;i++){
-            buildingNet.addVertex(building[i]);
-        }
-        stablishConnections();
-    }
-
-    private void stablishConnections(){
-        for(int i=0;i<building.length;i++){
-            for(int j=0; j<edges.length;j++){
-                if(building[i].getName().equals(edges[j][0])){
-                    for(int k=0; k<building.length; k++){
-                        if(building[k].getName().equals(edges[j][1])){
-                            buildingNet.addEdge(building[i], building[k], building[k].getEnemiesPower());
-                            buildingNet.addEdge(building[k], building[i], building[i].getEnemiesPower());
-                            building[k].getEdges().addToRear(edges[j][0]);
-                            building[i].getEdges().addToFront(edges[j][1]);
-                        }
-                    }
-                }
-            }
-        }
-    }
 
     private JsonObject readFile() throws FileNotFoundException {
         if(file == null) {
@@ -160,9 +130,9 @@ public class Import {
             }
 
             items[i] = new Item(amount, type, division);
-        }
-        if (Item.isValid(items)) {
-            throw new InvalidFileException("Items are invalid");
+            if(!items[i].isValid()) {
+                throw new InvalidFileException("Items are invalid");
+            }
         }
 
         return items;
@@ -178,23 +148,24 @@ public class Import {
         }
     }
 
-    public String[] importEntryExits() throws InvalidFileException{
+    public ArrayUnorderedList<Division> importEntryExits() throws InvalidFileException{
         JsonArray divisionsArray = map.getAsJsonArray("entradas-saidas");
-        String[] divisions = new String[divisionsArray.size()];
+        ArrayUnorderedList <Division> entriesExits= new ArrayUnorderedList<>();
+
 
         for (int i = 0; i < divisionsArray.size(); i++) {
-            divisions[i] = divisionsArray.get(i).getAsString();
+            Division div = new Division(divisionsArray.get(i).getAsString());
+            entriesExits.addToRear(div);
+
         }
 
-        return divisions;
+        return entriesExits;
     }
 
-    protected void setEntryExits (Division[] building, String[] exits){
+    protected void setEntryExits (Division[] building, ArrayUnorderedList<Division> exits){
         for(int i=0;i<building.length;i++){
-            for(int j=0;j<exits.length;j++){
-                if(building[i].getName().equals(exits[j])){
-                    building[i].setEntryExit();
-                }
+            if(exits.contains(building[i])){
+                building[i].setEntryExit();
             }
         }
     }
