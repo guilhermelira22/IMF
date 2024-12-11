@@ -36,7 +36,7 @@ public class MapBuilder extends Import{
         super(file);
         this.file = file;
         this.divisions = importDivisions();
-        this.enemies = importEnemies();
+        this.enemies = importEnemies(this.divisions);
         this.items = importItems();
         this.edges = importEdges();
         this.entriesExits = importEntryExits();
@@ -91,22 +91,35 @@ public class MapBuilder extends Import{
         stablishConnections();
     }
 
-    private void stablishConnections(){
-        for(int i=0;i<divisions.length;i++){
-            for(int j=0; j<edges.length;j++){
-                if(divisions[i].getName().equals(edges[j][0])){
-                    for(int k=0; k<divisions.length; k++){
-                        if(divisions[k].getName().equals(edges[j][1])){
-                            building.addEdge(divisions[i], divisions[k]);
-                            building.addEdge(divisions[k], divisions[i]);
-                            divisions[k].getEdges().addToRear(edges[j][0]);
-                            divisions[i].getEdges().addToFront(edges[j][1]);
-                        }
-                    }
+    private void stablishConnections() {
+        for (String[] edge : edges) {
+            String fromName = edge[0];
+            String toName = edge[1];
+
+            Division fromDivision = null;
+            Division toDivision = null;
+
+            for (Division division : divisions) {
+                if (division.getName().equals(fromName)) {
+                    fromDivision = division;
                 }
+                if (division.getName().equals(toName)) {
+                    toDivision = division;
+                }
+                if (fromDivision != null && toDivision != null) {
+                    break;
+                }
+            }
+
+            if (fromDivision != null && toDivision != null) {
+                building.addEdge(fromDivision, toDivision);
+
+                fromDivision.getEdges().addToRear(toDivision.getName());
+                toDivision.getEdges().addToRear(fromDivision.getName());
             }
         }
     }
+
 
     public boolean isTargetDivisionValid(Mission m) {
         for (int i = 0; i < divisions.length; i++) {

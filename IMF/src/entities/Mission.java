@@ -348,7 +348,7 @@ public class Mission {
 
         for (Division division : divisions) {
             Enemy[] enemies = division.getEnemies();
-            if (enemies != null) {
+            if (Enemy.isValid(enemies)) {
                 for (Enemy enemy : enemies) {
                     if (enemy.getLifePoints() == 100) {
                         allEnemies.addToRear(enemy);

@@ -65,9 +65,9 @@ public class Manual {
         boolean validChoice = false;
         while (!validChoice) {
             String choice = scan.nextLine();
-            Division chosenDiv = mission.getDivisionExitEntry(choice);
+            Division chosenDiv = mission.getDivision(choice);
 
-            if (chosenDiv != null && mission.getExitEntry().contains(chosenDiv)) {
+            if (chosenDiv != null && mission.getDivision(choice).getName().equals(choice)) {
                 currentDiv = chosenDiv;
                 path.enqueue(currentDiv);
                 lifePoints -= currentDiv.getEnemiesPower();
@@ -105,6 +105,7 @@ public class Manual {
     private void chooseOption() {
         Scanner scan = new Scanner(System.in, "ISO-8859-1");
         boolean validChoice = false;
+        showRealTimeInfo();
         while (!validChoice) {
             String choice = scan.nextLine();
 
@@ -265,16 +266,20 @@ public class Manual {
 
         System.out.println("Kits médicos:");
         for (Item kit : mission.getAllItems()) {
-            System.out.println("Kit médico em " + kit.getDivision());
+            if (kit.getItemType() == Item_Type.KIT) {
+                System.out.println("Kit médico em " + kit.getDivision());
+            }
         }
 
         System.out.println("Coletes:");
         for (Item vest : mission.getAllItems()) {
-            System.out.println("Colete em " + vest.getDivision());
+            if (vest.getItemType() == Item_Type.VEST) {
+                System.out.println("Colete em " + vest.getDivision());
+            }
         }
 
         GraphMatrix<Division> shortestPath = mission.getBuilding();
-        String bestPathForTarget = shortestPath.iteratorShortestPath(currentDiv, mission.getTarget().getDivision()).toString();
+        String bestPathForTarget = iteratorToString(shortestPath.iteratorShortestPath(currentDiv, mission.getTarget().getDivision()));
         String bestPathForKit = getBestPathToClosestKit();
 
         System.out.println("Melhor caminho para o alvo: " + bestPathForTarget);
@@ -283,7 +288,7 @@ public class Manual {
 
     public String getBestPathToClosestKit() {
         GraphMatrix<Division> graph = mission.getBuilding();
-        Division currentDivision = currentDiv; // Divisão atual onde Tó Cruz está
+        Division currentDivision = currentDiv;
 
         int shortestDistance = Integer.MAX_VALUE;
         String bestPath = "Nenhum kit médico disponível.";
@@ -296,12 +301,23 @@ public class Manual {
 
                 if (pathLength < shortestDistance) {
                     shortestDistance = pathLength;
-                    bestPath = pathIterator.toString();
+                    bestPath = iteratorToString(pathIterator);
                 }
             }
         }
 
         return bestPath;
+    }
+
+    private String iteratorToString(Iterator<Division> pathIterator) {
+        StringBuilder path = new StringBuilder();
+        while (pathIterator.hasNext()) {
+            path.append(pathIterator.next().getName());
+            if (pathIterator.hasNext()) {
+                path.append(" -> ");
+            }
+        }
+        return path.toString();
     }
 
     private int calculatePathLength(Iterator<Division> pathIterator) {

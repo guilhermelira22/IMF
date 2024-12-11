@@ -27,11 +27,6 @@ public class Import {
     public Import(String file) throws FileNotFoundException, InvalidFileException, NullException, InvalidTypeException {
         this.file = path + file;
         this.map = readFile();
-        this.building = importDivisions();
-        this.enemies = importEnemies();
-        this.items = importItems();
-        this.entriesExits = importEntryExits();
-        this.edges = importEdges();
     }
 
 
@@ -82,11 +77,11 @@ public class Import {
         }
         setEntryExits(building, importEntryExits());
         setItems(building, importItems());
-        setEnemies(building, importEnemies());
         return building;
     }
 
-    public Enemy[] importEnemies() throws InvalidFileException{
+
+    public Enemy[] importEnemies(Division[] building) throws InvalidFileException, NullException, InvalidTypeException {
         JsonArray enemiesArray = map.getAsJsonArray("inimigos");
         Enemy[] enemies = new Enemy[enemiesArray.size()];
 
@@ -96,15 +91,22 @@ public class Import {
             Double power = enemiesObject.get("poder").getAsDouble();
             String division_name = enemiesObject.get("divisao").getAsString();;
 
-            Division division = new Division(division_name);
-            enemies[i] = new Enemy(enemy_name, power, division);
-            if(!enemies[i].isValid()) {
-                throw new InvalidFileException("Enemies are invalid");
-            }
-        }
+            for(int j = 0; j < building.length; j++) {
+                if(building[j].getName().equals(division_name)) {
+                    enemies[i] = new Enemy(enemy_name, power, building[j]);
 
+                    if(!enemies[i].isValid()) {
+                        throw new InvalidFileException("Enemies are invalid");
+                    }
+                }
+            }
+
+
+        }
+        building[2].addEnemy(enemies[1]);
         return enemies;
     }
+
 
     protected void setEnemies (Division[] building, Enemy[] enemies) throws NullException, InvalidTypeException {
         for(int i = 0; i < building.length; i++) {
