@@ -3,6 +3,7 @@ package simulation;
 import Queue.Queue;
 import entities.*;
 import exceptions.InvalidFileException;
+import exceptions.InvalidTypeException;
 import exceptions.NullException;
 import graph.GraphMatrix;
 import graph.NetworkMatrix;
@@ -39,7 +40,7 @@ public class Manual {
         this.backpack = new LinkedStack<>();
     }
 
-    public void start() throws InvalidFileException {
+    public void start() throws InvalidFileException, NullException, InvalidTypeException {
         //System.out.println(getMissionDetails());
 
         chooseStartDivision();
@@ -79,7 +80,7 @@ public class Manual {
         }
     }
 
-    private void playGame() {
+    private void playGame() throws NullException, InvalidTypeException {
         Division target = mission.getTarget().getDivision();
 
         while (lifePoints > 0 && !flagLeft) {
@@ -102,7 +103,7 @@ public class Manual {
         System.out.println("\n1. Esperar\n2. Tomar kit médico\n");
     }
 
-    private void chooseOption() {
+    private void chooseOption() throws NullException, InvalidTypeException {
         Scanner scan = new Scanner(System.in, "ISO-8859-1");
         boolean validChoice = false;
         showRealTimeInfo();
@@ -210,25 +211,33 @@ public class Manual {
         }
     }
 
-    private void moveEnemies() {
+    private void moveEnemies() throws NullException, InvalidTypeException {
         for (Enemy enemy : mission.getAllEnemies()) {
-            Division currentDivision = mission.getDivision(enemy.getDivision().getName());
-            Division[] reachableDivisions = getReachableDivisions(currentDivision.getName(), 2);
+            Division currentDivision = mission.getDivision(enemy.getCurrentDivision().getName());
+            Division[] reachableDivisions = getReachableDivisions(currentDivision.getName(), 2, enemy);
             if (reachableDivisions != null && reachableDivisions.length > 0) {
-                Division newDivision = getRandomDivision(reachableDivisions);
-                enemy.setDivision(newDivision);
+                String newDivisionString = getRandomDivision(reachableDivisions, enemy);
+                for (int i = 0; i < reachableDivisions.length; i++) {
+                    if (reachableDivisions[i].getName().equals(newDivisionString)) {
+                        if (mission.getDivision(currentDivision.getName()).removeEnemy(enemy)) {
+                            enemy.setCurrentDivision(reachableDivisions[i]);
+                            mission.getDivision(reachableDivisions[i].getName()).addEnemy(enemy);
+                        }
+                    }
+                }
+
             }
         }
     }
 
-    public Division[] getReachableDivisions(String initialDivisionName, int maxDepth) {
+    public Division[] getReachableDivisions(String initialDivisionName, int maxDepth, Enemy enemy) {
         Division[] reachableDivisions = new Division[20];
-        int count = 0;
+        int count = 1;
 
-        Division initialDivision = mission.getDivision(initialDivisionName);
+        Division initialDivision = mission.getDivision(enemy.getDivision().getName());
         Queue<Division> queue = new Queue<Division>();
         Queue<Integer> depths = new Queue<Integer>();
-
+        reachableDivisions[0] = initialDivision;
         queue.enqueue(initialDivision);
         depths.enqueue(0);
 
@@ -253,15 +262,33 @@ public class Manual {
         return Arrays.copyOf(reachableDivisions, count);
     }
 
-    public Division getRandomDivision(Division[] reachableDivisions) {
-        int randomIndex = (int) (Math.random() * reachableDivisions.length);
-        return reachableDivisions[randomIndex];
+    public String getRandomDivision(Division[] reachableDivisions, Enemy enemy) {
+        ArrayUnorderedList<String> currentDivisionEdges = enemy.getCurrentDivision().getEdges();
+        ArrayUnorderedList<String> validDivisions = new ArrayUnorderedList<>();
+        Iterator<String> iterator;
+        int count = 0;
+        for (String edge : currentDivisionEdges) {
+            for (int i = 0; i < reachableDivisions.length; i++) {
+                if (reachableDivisions[i].getName().equals(edge)) {
+                    validDivisions.addToRear(edge);
+                }
+            }
+        }
+
+        int randomIndex = (int) (Math.random() * validDivisions.size());
+        iterator = validDivisions.iterator();
+        String next = null;
+        while (iterator.hasNext() && count <= randomIndex) {
+            next = iterator.next();
+            count++;
+        }
+        return next;
     }
 
     private void showRealTimeInfo() {
         System.out.println("Inimigos:");
         for (Enemy enemy : mission.getAllEnemies()) {
-            System.out.println("Inimigo em " + enemy.getDivision());
+            System.out.println("Inimigo em " + enemy.getCurrentDivision());
         }
 
         System.out.println("Kits médicos:");

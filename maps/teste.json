@@ -1,0 +1,53 @@
+{
+  "cod-missao": "pata de coelho",
+  "versao": 1,
+  "edificio": [
+    "Heliporto",
+    "Escada 6",
+    "Camaratas",
+    "Armazém",
+    "Porteiro"
+  ],
+  "ligacoes": [
+    [
+      "Heliporto",
+      "Escada 6"
+    ],
+    [
+      "Escada 6",
+      "Camaratas"
+    ],
+    [
+      "Camaratas",
+      "Armazém"
+    ],
+    [
+      "Porteiro",
+      "Armazém"
+    ]
+  ],
+  "inimigos": [
+    {
+      "nome": "badguy1",
+      "poder": 5,
+      "divisao": "Heliporto"
+    },
+    {
+      "nome": "badguy2",
+      "poder": 15,
+      "divisao": "Camaratas"
+    }
+  ],
+  "entradas-saidas": [
+    "Porteiro"
+  ],
+  "alvo": {
+    "divisao": "Camaratas",
+    "tipo": "documento"
+  },
+  "itens":[
+    {"divisao": "Camaratas", "pontos-recuperados": 20, "tipo":"kit de vida"},
+    {"divisao": "Armazém", "pontos-recuperados": 15, "tipo":"kit de vida"},
+    {"divisao": "Heliporto", "pontos-extra": 25, "tipo":"colete"} ]
+
+}
