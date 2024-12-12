@@ -1,4 +1,4 @@
-import entities.MissionImpl;
+import entities.*;
 import exceptions.InvalidFileException;
 import exceptions.InvalidTypeException;
 import exceptions.NullException;

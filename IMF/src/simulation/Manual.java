@@ -215,7 +215,7 @@ public class Manual {
     }
 
     private void moveEnemies() throws NullException, InvalidTypeException {
-        for (Enemy enemy : mission.getAllEnemies()) {
+        for (Enemy enemy :  mission.getAllEnemies()) {
             Division currentDivision = mission.getDivision(enemy.getCurrentDivision().getName());
             Division[] reachableDivisions = getReachableDivisions(currentDivision.getName(), 2, enemy);
             if (reachableDivisions != null && reachableDivisions.length > 0) {

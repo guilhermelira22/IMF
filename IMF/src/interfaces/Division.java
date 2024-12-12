@@ -10,6 +10,8 @@ public interface Division {
 
     void setName(String name);
 
+    boolean removeEnemy(Enemy enemy);
+
     boolean isEntryExit();
 
     void setEntryExit();

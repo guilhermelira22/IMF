@@ -6,6 +6,10 @@ public interface Enemy {
 
     void setName(String name);
 
+    Division getCurrentDivision();
+
+    void setCurrentDivision(Division currentDivision);
+
     Double getPower();
 
     void setPower(Double power);
@@ -13,8 +17,6 @@ public interface Enemy {
     Division getDivision();
 
     void setDivision(Division divisionImpl);
-
-    String getInicialDivision();
 
     Double getLifePoints();
 
