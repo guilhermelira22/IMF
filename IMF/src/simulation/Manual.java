@@ -21,8 +21,8 @@ import java.util.Scanner;
 
 public class Manual {
 
-    private static final Double LIFE_DEFAULT = 100.0;
-    private static final int POWER = 30;
+    private static final Double LIFE_DEFAULT = 500.0;
+    private static final int POWER = 40;
     private static final String STRING_AUX = "\n*-*-*-*-*-*-*-*-*\n";
 
     private Queue<Division> path;
@@ -74,7 +74,7 @@ public class Manual {
             if (chosenDiv != null && mission.getDivision(choice).getName().equals(choice)) {
                 currentDiv = chosenDiv;
                 path.enqueue(currentDiv);
-                if (currentDiv.getEnemies() == null) {
+                if (currentDiv.getEnemies() != null) {
                     System.out.println("Entrou numa divisão com inimigos! Divisão Atual: " + currentDiv.getName());
                     attackAllEnemies();
                     lifePoints -= currentDiv.getEnemiesPower();
@@ -111,7 +111,11 @@ public class Manual {
         while (it.hasNext()) {
             System.out.println(it.next() + ", ");
         }
-        System.out.println("\n1. Esperar\n2. Tomar kit médico\n");
+        if (currentDiv.isEntryExit()) {
+            System.out.println("\n1. Esperar\n2. Tomar kit médico\n3. Sair\n");
+        } else {
+            System.out.println("\n1. Esperar\n2. Tomar kit médico\n");
+        }
     }
 
     private void chooseOption() throws NullException, InvalidTypeException {
@@ -126,7 +130,7 @@ public class Manual {
                 currentDiv = mission.getDivision(choice);
                 path.enqueue(currentDiv);
 
-                if (currentDiv.getEnemies() != null) {
+                if (currentDiv.getEnemies().length != 0) {
                     System.out.println("Entrou numa divisão com inimigos! Divisão Atual: " + currentDiv.getName());
                     attackAllEnemies();
                     lifePoints -= currentDiv.getEnemiesPower();
@@ -149,6 +153,8 @@ public class Manual {
                 moveEnemies();
                 showRealTimeInfo();
                 break;
+            } else if (choice.equals("3") && currentDiv.isEntryExit()) {
+                finishMission(mission.getTarget().getDivision());
             } else {
                 System.out.println("Opção inválida, tente novamente.");
                 break;
@@ -167,6 +173,10 @@ public class Manual {
                 case "1":
                     attackAllEnemies();
                     lifePoints -= currentDiv.getEnemiesPower();
+                    for (Enemy enemy : currentDiv.getEnemies()) {
+                        System.out.println("Inimigo " + enemy.getName() + " atacou! Dano: " + enemy.getPower());
+                    }
+                    System.out.println("Pontos de Vida: " + lifePoints);
                     break;
 
                 case "2":
@@ -179,11 +189,9 @@ public class Manual {
             }
 
             if (lifePoints <= 0) {
-                System.out.println("Tó Cruz morreu! Missão falhada.");
                 break;
             }
 
-            System.out.println("Pontos de Vida: " + lifePoints);
             moveEnemies();
             showRealTimeInfo();
         }
@@ -199,15 +207,24 @@ public class Manual {
         return false;
     }
 
+    public void enemiesAttack(Enemy enemy) {
+        lifePoints -= enemy.getPower();
+        System.out.println("Inimigo " + enemy.getName() + " atacou! Dano: " + enemy.getPower());
+    }
+
     private void attackAllEnemies() {
         Enemy[] enemies = currentDiv.getEnemies();
-        for (int i = 0; i < enemies.length; i++) {
+        int j = enemies.length;
+        for (int i = 0; i < j; i++) {
             enemies[i].setLifePoints(enemies[i].getLifePoints() - POWER);
             if (enemies[i].getLifePoints() <= 0) {
                 System.out.println("Matou o inimigo: " + enemies[i].getName());
                 currentDiv.removeEnemy(enemies[i]);
+                i--;
+                j--;
+            } else {
+                System.out.println("Atacou o inimigo " + enemies[i].getName() + "! Pontos de vida do inimigo: " + enemies[i].getLifePoints());
             }
-            System.out.println("Atacou o inimigo! Pontos de vida do inimigo: " + enemies[i].getLifePoints());
         }
     }
 
@@ -231,11 +248,15 @@ public class Manual {
         } else if (currentDiv.getName().equals(target) && !flagTarget) {
             System.out.println("Alvo adquirido com sucesso!");
             flagTarget = true;
-        } else if (flagTarget && currentDiv.isEntryExit()) {
+        }
+    }
+
+    private void finishMission(Division target) {
+        if (flagTarget && currentDiv.isEntryExit()) {
             System.out.println("Missão concluída com sucesso! Parabéns Tó Cruz!!");
             flagLeft = true;
         } else if (!flagTarget && currentDiv.isEntryExit()) {
-            System.out.println("Você não tem o alvo! Quer mesmo sair?");
+            System.out.println("Você ainda não tem o alvo! Quer sair?");
             String exitChoice = new Scanner(System.in).nextLine();
             if ("Sim".equalsIgnoreCase(exitChoice)) {
                 flagLeft = true;
@@ -257,8 +278,8 @@ public class Manual {
                             mission.getDivision(reachableDivisions[i].getName()).addEnemy(enemy);
                             if (reachableDivisions[i].equals(currentDiv)) {
                                 System.out.println("Um inimigo entrou na divisão! ");
-                                lifePoints -= currentDiv.getEnemiesPower();
-                                encounter();
+                                enemiesAttack(enemy);
+                                System.out.println("Pontos de Vida: " + lifePoints);
                             }
                         }
                     }
