@@ -2,12 +2,15 @@ package simulation;
 
 import Queue.Queue;
 import entities.*;
+import enums.Item_Type;
 import exceptions.InvalidFileException;
 import exceptions.InvalidTypeException;
 import exceptions.NullException;
 import graph.GraphMatrix;
-import graph.NetworkMatrix;
-import json.Import;
+import interfaces.Division;
+import interfaces.Enemy;
+import interfaces.Item;
+import interfaces.Mission;
 import orderedUnorderedList.ArrayUnorderedList;
 import stack.LinkedStack;
 
@@ -35,7 +38,7 @@ public class Manual {
         this.lifePoints = LIFE_DEFAULT;
         this.flagLeft = false;
         this.flagTarget = false;
-        this.currentDiv = new Division();
+        this.currentDiv = new DivisionImpl();
         this.path = new Queue<Division>();
         this.backpack = new LinkedStack<>();
     }
@@ -47,7 +50,7 @@ public class Manual {
 
         playGame();
 
-        SimulationManual newSimulation = new SimulationManual(lifePoints, path, flagTarget);
+        SimulationManualImpl newSimulation = new SimulationManualImpl(lifePoints, path, flagTarget);
         try {
             mission.addSimulation(newSimulation);
         } catch (NullException ex) {
@@ -212,7 +215,7 @@ public class Manual {
     }
 
     private void moveEnemies() throws NullException, InvalidTypeException {
-        for (Enemy enemy : mission.getAllEnemies()) {
+        for (Enemy enemy :  mission.getAllEnemies()) {
             Division currentDivision = mission.getDivision(enemy.getCurrentDivision().getName());
             Division[] reachableDivisions = getReachableDivisions(currentDivision.getName(), 2, enemy);
             if (reachableDivisions != null && reachableDivisions.length > 0) {
@@ -323,7 +326,7 @@ public class Manual {
         for (Item kit : mission.getAllItems()) {
             if (kit.getDivision() != null) {
                 Division kitDivision = kit.getDivision();
-                Iterator<Division> pathIterator = graph.iteratorShortestPath(currentDivision, kitDivision);
+                Iterator<DivisionImpl> pathIterator = graph.iteratorShortestPath(currentDivision, kitDivision);
                 int pathLength = calculatePathLength(pathIterator);
 
                 if (pathLength < shortestDistance) {
@@ -336,7 +339,7 @@ public class Manual {
         return bestPath;
     }
 
-    private String iteratorToString(Iterator<Division> pathIterator) {
+    private String iteratorToString(Iterator<DivisionImpl> pathIterator) {
         StringBuilder path = new StringBuilder();
         while (pathIterator.hasNext()) {
             path.append(pathIterator.next().getName());
@@ -347,12 +350,12 @@ public class Manual {
         return path.toString();
     }
 
-    private int calculatePathLength(Iterator<Division> pathIterator) {
+    private int calculatePathLength(Iterator<DivisionImpl> pathIterator) {
         int length = 0;
-        Division previous = null;
+        DivisionImpl previous = null;
 
         while (pathIterator.hasNext()) {
-            Division current = pathIterator.next();
+            DivisionImpl current = pathIterator.next();
             if (previous != null) {
                 length++;
             }

@@ -2,9 +2,14 @@ package json;
 
 import com.google.gson.*;
 import entities.*;
+import enums.Item_Type;
 import exceptions.InvalidFileException;
 import exceptions.InvalidTypeException;
 import exceptions.NullException;
+import interfaces.Division;
+import interfaces.Enemy;
+import interfaces.Item;
+import interfaces.Target;
 import orderedUnorderedList.ArrayUnorderedList;
 
 
@@ -16,12 +21,12 @@ public class Import {
     private final String file;
     private final String path = "maps/";
     private JsonObject map;
-    private Division[] building;
-    private ArrayUnorderedList<Division> entriesExits;
-    private Item[] items;
-    private Enemy[] enemies;
+    private DivisionImpl[] building;
+    private ArrayUnorderedList<DivisionImpl> entriesExits;
+    private ItemImpl[] items;
+    private EnemyImpl[] enemies;
     private String[][] edges;
-    private Target target;
+    private TargetImpl target;
 
 
     public Import(String file) throws FileNotFoundException, InvalidFileException, NullException, InvalidTypeException {
@@ -44,7 +49,19 @@ public class Import {
         }
     }
 
-    public Mission importMission() throws InvalidFileException {
+    public DivisionImpl[] importDivisions() throws FileNotFoundException, InvalidFileException, NullException, InvalidTypeException {
+
+        JsonArray divisionsArray = map.getAsJsonArray("edificio");
+        DivisionImpl[] building = new DivisionImpl[divisionsArray.size()];
+
+        for (int i = 0; i < divisionsArray.size(); i++) {
+            String divisionName = divisionsArray.get(i).getAsString();
+            building[i] = new DivisionImpl(divisionName);
+        }
+        return building;
+    }
+
+    public MissionImpl importMission(DivisionImpl[] building) throws InvalidFileException {
         try {
             String mission_name = map.get("cod-missao").getAsString();
             Integer mission_version = map.get("versao").getAsInt();
@@ -53,10 +70,15 @@ public class Import {
             String division_name = targetObject.get("divisao").getAsString();
             String target_type = targetObject.get("tipo").getAsString();
 
-            Division target_division = new Division(division_name);
-            Target missionTarget = new Target (target_division, target_type);
+            TargetImpl missionTarget = null;
+            for (int i = 0; i < building.length; i++) {
+                if (building[i].getName().equals(division_name)) {
+                    missionTarget = new TargetImpl(building[i], target_type);
+                }
+            }
 
-            Mission mission = new Mission(mission_name, mission_version, missionTarget);
+
+            MissionImpl mission = new MissionImpl(mission_name, mission_version, missionTarget);
             if (!mission.isValid()) {
                 throw new InvalidFileException("mission is invalid");
             }
@@ -66,22 +88,10 @@ public class Import {
         }
     }
 
-    public Division[] importDivisions() throws FileNotFoundException, InvalidFileException, NullException, InvalidTypeException {
 
-        JsonArray divisionsArray = map.getAsJsonArray("edificio");
-        Division[] building = new Division[divisionsArray.size()];
-
-        for (int i = 0; i < divisionsArray.size(); i++) {
-            String divisionName = divisionsArray.get(i).getAsString();
-            building[i] = new Division(divisionName);
-        }
-        return building;
-    }
-
-
-    public Enemy[] importEnemies(Division[] building) throws InvalidFileException, NullException, InvalidTypeException {
+    public Enemy[] importEnemies(DivisionImpl[] building) throws InvalidFileException, NullException, InvalidTypeException {
         JsonArray enemiesArray = map.getAsJsonArray("inimigos");
-        Enemy[] enemies = new Enemy[enemiesArray.size()];
+        EnemyImpl[] enemies = new EnemyImpl[enemiesArray.size()];
 
         for (int i = 0; i < enemiesArray.size(); i++) {
             JsonObject enemiesObject = enemiesArray.get(i).getAsJsonObject();
@@ -91,7 +101,7 @@ public class Import {
 
             for(int j = 0; j < building.length; j++) {
                 if(building[j].getName().equals(division_name)) {
-                    enemies[i] = new Enemy(enemy_name, power, building[j]);
+                    enemies[i] = new EnemyImpl(enemy_name, power, building[j]);
                     building[j].addEnemy(enemies[i]);
 
                     if(!enemies[i].isValid()) {
@@ -103,10 +113,10 @@ public class Import {
         return enemies;
     }
 
-    public Item[] importItems(Division[] building) throws InvalidFileException{
+    public ItemImpl[] importItems(DivisionImpl[] building) throws InvalidFileException{
         JsonArray itemsArray = map.getAsJsonArray("itens");
 
-        Item[] items = new Item[itemsArray.size()];
+        ItemImpl[] items = new ItemImpl[itemsArray.size()];
 
         for (int i = 0; i < itemsArray.size(); i++) {
             JsonObject itemObject = itemsArray.get(i).getAsJsonObject();
@@ -133,7 +143,7 @@ public class Import {
 
             for(int j = 0; j < building.length; j++) {
                 if(building[j].getName().equals(division_name)) {
-                    items[i] = new Item(amount, type, building[j]);
+                    items[i] = new ItemImpl(amount, type, building[j]);
                     building[j].setItem(items[i]);
 
                     if(!items[i].isValid()) {
@@ -154,10 +164,10 @@ public class Import {
         for (int i = 0; i < divisionsArray.size(); i++) {
             String division_name = divisionsArray.get(i).getAsString();
 
-            for (Division division : building) {
-                if (division.getName().equals(division_name)) {
-                    division.setEntryExit();
-                    entriesExits.addToRear(division);
+            for (Division divisionImpl : building) {
+                if (divisionImpl.getName().equals(division_name)) {
+                    divisionImpl.setEntryExit();
+                    entriesExits.addToRear(divisionImpl);
                 }
             }
 
@@ -165,7 +175,7 @@ public class Import {
         return entriesExits;
     }
 
-    protected void setEntryExits (Division[] building, ArrayUnorderedList<Division> exits){
+    protected void setEntryExits (DivisionImpl[] building, ArrayUnorderedList<DivisionImpl> exits){
         for(int i=0;i<building.length;i++){
             if(exits.contains(building[i])){
                 building[i].setEntryExit();

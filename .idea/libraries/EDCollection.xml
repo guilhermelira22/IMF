@@ -1,7 +1,7 @@
 <component name="libraryTable">
   <library name="EDCollection">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/../EDCollection/EDCollection/out/artifacts/EDCollection_jar/EDCollection.jar!/" />
+      <root url="jar://$USER_HOME$/Downloads/EDCollection.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
