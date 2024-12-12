@@ -28,7 +28,6 @@ public class ItemImpl implements Item {
         this.amount = amount;
     }
 
-
     public Item_Type getItemType() {
         return this.type;
     }
@@ -36,7 +35,6 @@ public class ItemImpl implements Item {
     public void setItemType(Item_Type type) {
         this.type = type;
     }
-
 
     public Division getDivision() {
         return this.division;

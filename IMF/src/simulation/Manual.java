@@ -13,6 +13,7 @@ import interfaces.Item;
 import interfaces.Mission;
 import orderedUnorderedList.ArrayUnorderedList;
 import stack.LinkedStack;
+import interfaces.To;
 
 import java.util.*;
 
@@ -24,20 +25,16 @@ public class Manual {
 
     private Queue<Division> path;
     private MissionImpl mission;
-    private double lifePoints;
     private boolean flagLeft;
     private boolean flagTarget;
-    private Division currentDiv;
-    private LinkedStack<Item> backpack;
+    private To toCruz;
 
     public Manual(MissionImpl mission) {
         this.mission = mission;
-        this.lifePoints = LIFE_DEFAULT;
         this.flagLeft = false;
         this.flagTarget = false;
-        this.currentDiv = new DivisionImpl();
         this.path = new Queue<Division>();
-        this.backpack = new LinkedStack<>();
+        this.toCruz = new ToImpl(40.0);
     }
 
     public void start() throws InvalidFileException, NullException, InvalidTypeException {
@@ -46,7 +43,7 @@ public class Manual {
 
         playGame();
 
-        SimulationManualImpl newSimulation = new SimulationManualImpl(lifePoints, path, flagTarget);
+        SimulationManualImpl newSimulation = new SimulationManualImpl(toCruz.getLifePoints(), path, flagTarget);
         try {
             mission.addSimulation(newSimulation);
         } catch (NullException ex) {
@@ -68,24 +65,26 @@ public class Manual {
             Division chosenDiv = mission.getDivision(choice);
 
             if (chosenDiv != null && mission.getDivision(choice).getName().equals(choice)) {
-                currentDiv = chosenDiv;
-                path.enqueue(currentDiv);
-                if (currentDiv.sizeEnemies() != 0) {
-                    System.out.println("Entrou numa divisão com inimigos! Divisão Atual: " + currentDiv.getName());
+                toCruz.setDivision(chosenDiv);
+                path.enqueue(toCruz.getDivision());
+                if (toCruz.getDivision().sizeEnemies() != 0) {
+                    System.out.println("Entrou numa divisão com inimigos! Divisão Atual: " + toCruz.getDivision().getName());
                     attackAllEnemies();
-                    lifePoints -= currentDiv.getEnemiesPower();
-                    for (Enemy enemy : currentDiv.getEnemies()) {
+                    toCruz.reduceLifePoints(toCruz.getDivision().getEnemiesPower());
+                    for (Enemy enemy : toCruz.getDivision().getEnemies()) {
                         System.out.println("Inimigo " + enemy.getName() + " atacou! Dano: " + enemy.getPower());
                     }
-                    if (currentDiv.sizeEnemies() != 0) {
-                        mission.moveEnemies(mission.getAllEnemies(), currentDiv, lifePoints, true);
+                    if (toCruz.getDivision().sizeEnemies() != 0) {
+                        mission.moveEnemies(mission.getAllEnemies(), toCruz.getDivision(), toCruz.getLifePoints(), true);
                         encounter();
                     }
                 } else {
-                    System.out.println("Pontos de Vida: " + lifePoints + "\nDivisão Atual: " + currentDiv.getName());
+                    System.out.println("Pontos de Vida: " + toCruz.getLifePoints() + "\nDivisão Atual: " + toCruz.getDivision().getName());
                 }
-                if (addMedicakKit()) {
+                if (toCruz.addMedicakKit()) {
                     System.out.println("Pegou um kit médico!");
+                } else if(toCruz.addVest()){
+                    System.out.println("Vestiu um colete!");
                 }
                 validChoice = true;
             } else {
@@ -97,7 +96,7 @@ public class Manual {
     private void playGame() throws NullException, InvalidTypeException {
         Division target = mission.getTarget().getDivision();
 
-        while (lifePoints > 0 && !flagLeft) {
+        while (toCruz.getLifePoints() > 0 && !flagLeft) {
             showOptions();
 
             chooseOption();
@@ -110,11 +109,11 @@ public class Manual {
 
     private void showOptions() {
         System.out.println("Escolha a próxima divisão ou uma ação:\n");
-        Iterator<String> it = currentDiv.getEdges().iterator();
+        Iterator<String> it = toCruz.getDivision().getEdges().iterator();
         while (it.hasNext()) {
             System.out.println(it.next() + ", ");
         }
-        if (currentDiv.isEntryExit()) {
+        if (toCruz.getDivision().isEntryExit()) {
             System.out.println("\n1. Esperar\n2. Tomar kit médico\n3. Sair\n");
         } else {
             System.out.println("\n1. Esperar\n2. Tomar kit médico\n");
@@ -129,38 +128,40 @@ public class Manual {
         while (!validChoice) {
             String choice = scan.nextLine();
 
-            if (currentDiv.getEdges().contains(choice)) {
-                currentDiv = mission.getDivision(choice);
-                path.enqueue(currentDiv);
+            if (toCruz.getDivision().getEdges().contains(choice)) {
+                toCruz.setDivision(mission.getDivision(choice));
+                path.enqueue(toCruz.getDivision());
 
-                if (currentDiv.sizeEnemies() != 0) {
-                    System.out.println("Entrou numa divisão com inimigos! Divisão Atual: " + currentDiv.getName());
+                if (toCruz.getDivision().sizeEnemies() != 0) {
+                    System.out.println("Entrou numa divisão com inimigos! Divisão Atual: " + toCruz.getDivision().getName());
                     attackAllEnemies();
-                    lifePoints -= currentDiv.getEnemiesPower();
-                    if (currentDiv.sizeEnemies() != 0) {
-                        mission.moveEnemies(mission.getAllEnemies(), currentDiv, lifePoints, true);
+                    toCruz.reduceLifePoints(toCruz.getDivision().getEnemiesPower());
+                    if (toCruz.getDivision().sizeEnemies() != 0) {
+                        mission.moveEnemies(mission.getAllEnemies(), toCruz.getDivision(), toCruz.getLifePoints(), true);
                         encounter();
                     }
                 } else {
-                    System.out.println("Pontos de Vida: " + lifePoints + "\nDivisão Atual: " + currentDiv.getName());
-                    mission.moveEnemies(mission.getAllEnemies(), currentDiv, lifePoints, true);
-                    if (currentDiv.sizeEnemies() != 0) {
+                    System.out.println("Pontos de Vida: " + toCruz.getLifePoints() + "\nDivisão Atual: " + toCruz.getDivision().getName());
+                    mission.moveEnemies(mission.getAllEnemies(), toCruz.getDivision(), toCruz.getLifePoints(), true);
+                    if (toCruz.getDivision().sizeEnemies() != 0) {
                         encounter();
                     }
                 }
-                if (addMedicakKit()) {
+                if (toCruz.addMedicakKit()) {
                     System.out.println("Pegou um kit médico!");
+                } else if(toCruz.addVest()){
+                    System.out.println("Vestiu um colete!");
                 }
                 validChoice = true;
 
             } else if (choice.equals("1")) {
-                System.out.println("Esperou na divisão: " + currentDiv.getName());
-                mission.moveEnemies(mission.getAllEnemies(), currentDiv, lifePoints, true);
+                System.out.println("Esperou na divisão: " + toCruz.getDivision().getName());
+                mission.moveEnemies(mission.getAllEnemies(), toCruz.getDivision(), toCruz.getLifePoints(), true);
                 validChoice = true;
             } else if (choice.equals("2")) {
                 useMedicalKit();
                 validChoice = true;
-            } else if (choice.equals("3") && currentDiv.isEntryExit()) {
+            } else if (choice.equals("3") && toCruz.getDivision().isEntryExit()) {
                 finishMission(mission.getTarget().getDivision());
                 validChoice = true;
             } else {
@@ -171,13 +172,13 @@ public class Manual {
     }
 
     protected void attackAllEnemies() {
-        Enemy[] enemies = currentDiv.getEnemies();
+        Enemy[] enemies = toCruz.getDivision().getEnemies();
         int j = enemies.length;
         for (int i = 0; i < j; i++) {
             enemies[i].setLifePoints(enemies[i].getLifePoints() - POWER);
             if (enemies[i].getLifePoints() <= 0) {
                 System.out.println("Matou o inimigo: " + enemies[i].getName());
-                currentDiv.removeEnemy(enemies[i]);
+                toCruz.getDivision().removeEnemy(enemies[i]);
                 i--;
                 j--;
             } else {
@@ -189,18 +190,18 @@ public class Manual {
     private void encounter() throws NullException, InvalidTypeException {
         Scanner scan = new Scanner(System.in, "ISO-8859-1");
 
-        while (lifePoints > 0 && enemiesRemaining()) {
+        while (toCruz.getLifePoints() > 0 && enemiesRemaining()) {
             System.out.println("\n1. Atacar\n2. Tomar kit médico\n");
             String action = scan.nextLine();
 
             switch (action) {
                 case "1":
                     attackAllEnemies();
-                    lifePoints -= currentDiv.getEnemiesPower();
-                    for (Enemy enemy : currentDiv.getEnemies()) {
+                    toCruz.reduceLifePoints(toCruz.getDivision().getEnemiesPower());
+                    for (Enemy enemy : toCruz.getDivision().getEnemies()) {
                         System.out.println("Inimigo " + enemy.getName() + " atacou! Dano: " + enemy.getPower());
                     }
-                    System.out.println("Pontos de Vida: " + lifePoints);
+                    System.out.println("Pontos de Vida: " + toCruz.getLifePoints());
                     break;
 
                 case "2":
@@ -212,16 +213,16 @@ public class Manual {
                     continue;
             }
 
-            if (lifePoints <= 0) {
+            if (toCruz.getLifePoints() <= 0) {
                 break;
             }
 
-            mission.moveEnemies(mission.getAllEnemies(), currentDiv, lifePoints, true);
+            mission.moveEnemies(mission.getAllEnemies(), toCruz.getDivision(), toCruz.getLifePoints(), true);
         }
     }
 
     private boolean enemiesRemaining() {
-        Enemy[] enemies = currentDiv.getEnemies();
+        Enemy[] enemies = toCruz.getDivision().getEnemies();
         for (int i = 0; i < enemies.length; i++) {
             if (enemies[i].getLifePoints() > 0) {
                 return true;
@@ -231,53 +232,44 @@ public class Manual {
     }
 
     public void enemiesAttack(Enemy enemy) {
-        lifePoints -= enemy.getPower();
+        toCruz.reduceLifePoints(enemy.getPower());
         System.out.println("Inimigo " + enemy.getName() + " atacou! Dano: " + enemy.getPower());
     }
 
     private void useMedicalKit() throws NullException, InvalidTypeException {
-        if (backpack.isEmpty()) {
+        Item medicalKit = toCruz.getItem();
+        if (medicalKit==null) {
             System.out.println("Nenhum kit médico na mochila.");
         } else {
-            Item medicalKit = backpack.pop();
-            if (lifePoints != 100) {
-                lifePoints += medicalKit.getAmount();
-                if (lifePoints > 100) {
-                    lifePoints = 100;
+
+            if (toCruz.getLifePoints() != 100) {
+                toCruz.addLifePoints(medicalKit.getAmount());
+                if (toCruz.getLifePoints() > 100) {
+                    toCruz.setLifePoints(100.0);
                 }
-                System.out.println("Usou kit médico! Pontos de vida: " + lifePoints);
+                System.out.println("Usou kit médico! Pontos de vida: " + toCruz.getLifePoints());
             } else {
                 System.out.println("Já está com 100 pontos de vida.");
             }
-            mission.moveEnemies(mission.getAllEnemies(), currentDiv, lifePoints, true);
+            mission.moveEnemies(mission.getAllEnemies(), toCruz.getDivision(), toCruz.getLifePoints(), true);
         }
-    }
-
-    private boolean addMedicakKit() {
-        if (currentDiv.getItem() != null) {
-            if (currentDiv.getItem().getItemType() == Item_Type.KIT) {
-                backpack.push(currentDiv.getItem());
-                return true;
-            }
-        }
-        return false;
     }
 
     private void checkMissionStatus(Division target) {
-        if (lifePoints <= 0) {
+        if (toCruz.getLifePoints() <= 0) {
             System.out.println("Missão falhou! Tó Cruz perdeu toda a vida.");
             flagLeft = true;
-        } else if (currentDiv.getName().equals(target.getName()) && !flagTarget) {
+        } else if (toCruz.getDivision().getName().equals(target.getName()) && !flagTarget) {
             System.out.println("Alvo adquirido com sucesso!");
             flagTarget = true;
         }
     }
 
     private void finishMission(Division target) {
-        if (flagTarget && currentDiv.isEntryExit()) {
+        if (flagTarget && toCruz.getDivision().isEntryExit()) {
             System.out.println("Missão concluída com sucesso! Parabéns Tó Cruz!!");
             flagLeft = true;
-        } else if (!flagTarget && currentDiv.isEntryExit()) {
+        } else if (!flagTarget && toCruz.getDivision().isEntryExit()) {
             System.out.println("Você ainda não tem o alvo! Quer sair?");
             String exitChoice = new Scanner(System.in).nextLine();
             if ("Sim".equalsIgnoreCase(exitChoice)) {
@@ -308,7 +300,7 @@ public class Manual {
         }
 
         GraphMatrix<Division> shortestPath = mission.getBuilding();
-        String bestPathForTarget = iteratorToString(shortestPath.iteratorShortestPath(currentDiv, mission.getTarget().getDivision()));
+        String bestPathForTarget = iteratorToString(shortestPath.iteratorShortestPath(toCruz.getDivision(), mission.getTarget().getDivision()));
         String bestPathForKit = getBestPathToClosestKit();
 
         System.out.println("Melhor caminho para o alvo: " + bestPathForTarget);
@@ -317,7 +309,7 @@ public class Manual {
 
     public String getBestPathToClosestKit() {
         GraphMatrix<Division> graph = mission.getBuilding();
-        Division currentDivision = currentDiv;
+        Division currentDivision = toCruz.getDivision();
 
         int shortestDistance = Integer.MAX_VALUE;
         String bestPath = "Nenhum kit médico disponível.";

@@ -1,5 +1,6 @@
 package entities;
 
+import enums.Item_Type;
 import interfaces.Division;
 import interfaces.Item;
 import interfaces.To;
@@ -17,6 +18,7 @@ public class ToImpl implements To {
         super();
         this.power = power;
         this.lifePoints = 100.0;
+        this.backpack = new LinkedStack<>();
     }
 
     @Override
@@ -40,6 +42,16 @@ public class ToImpl implements To {
     }
 
     @Override
+    public void addLifePoints(Double lifePoints) {
+        this.lifePoints += lifePoints;
+    }
+
+    @Override
+    public void reduceLifePoints(Double lifePoints) {
+        this.lifePoints -= lifePoints;
+    }
+
+    @Override
     public Division getDivision() {
         return this.division;
     }
@@ -58,7 +70,26 @@ public class ToImpl implements To {
     }
 
     @Override
-    public void addItem(Item item) {
-        backpack.push(item);
+    public boolean addMedicakKit() {
+        if (this.division.getItem() != null) {
+            if (this.division.getItem().getItemType() == Item_Type.KIT) {
+                backpack.push(this.division.getItem());
+                division.setItem(null);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean addVest() {
+        if (this.division.getItem() != null) {
+            if (this.division.getItem().getItemType() == Item_Type.VEST) {
+                this.lifePoints += this.division.getItem().getAmount();
+                division.setItem(null);
+                return true;
+            }
+        }
+        return false;
     }
 }
