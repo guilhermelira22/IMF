@@ -5,10 +5,16 @@
  */
 package entities;
 
+import Queue.Queue;
+import exceptions.InvalidTypeException;
+import exceptions.NullException;
 import interfaces.Division;
 import interfaces.Enemy;
 import com.google.gson.annotations.SerializedName;
 import orderedUnorderedList.ArrayUnorderedList;
+
+import java.util.Arrays;
+import java.util.Iterator;
 
 /**
  * Estrutura de Dados - 2020-2021.
@@ -215,4 +221,5 @@ public class EnemyImpl implements Enemy {
     public String toString() {
         return "Enimigo{" + "nome:" + name + ", poder:" + power + ", divisão:" + division + '}';
     }
+
 }

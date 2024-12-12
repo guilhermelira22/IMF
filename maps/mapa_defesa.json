@@ -15,10 +15,10 @@
     "Segurança",
     "Hall",
     "Escada 3",
-    "Escritório 1",
+    "Escritorio1",
     "Escritório 2",
-    "Escada de Emergência",
-    "Corredor 1",
+    "EscadadeEmergencia",
+    "Corredor1",
     "Escada 2",
     "Porteiro",
     "Escada 1",
@@ -31,11 +31,11 @@
     ],
     [
       "Garagem",
-      "Escada de Emergência"
+      "EscadadeEmergencia"
     ],
     [
-      "Escritório 1",
-      "Escada de Emergência"
+      "Escritorio1",
+      "EscadadeEmergencia"
     ],
     [
       "Porteiro",
@@ -46,19 +46,19 @@
       "Escada 2"
     ],
     [
-      "Corredor 1",
+      "Corredor1",
       "Escada 2"
     ],
     [
-      "Corredor 1",
-      "Escritório 1"
+      "Corredor1",
+      "Escritorio1"
     ],
     [
-      "Corredor 1",
+      "Corredor1",
       "Escritório 2"
     ],
     [
-      "Corredor 1",
+      "Corredor1",
       "Escada 3"
     ],
     [
@@ -119,7 +119,7 @@
     {
       "nome": "badguy2",
       "poder": 15,
-      "divisao": "Escada de Emergência"
+      "divisao": "Escritorio1"
     },
     {
       "nome": "badguy3",
@@ -138,18 +138,18 @@
     }
   ],
   "entradas-saidas": [
-    "Escada de Emergência",
+    "EscadadeEmergencia",
     "Garagem",
     "Heliporto",
     "Porteiro"
   ],
   "alvo": {
-    "divisao": "Escritório 1",
+    "divisao": "Escritorio1",
     "tipo": "documento"
   },
   "itens":[
     {"divisao": "WC", "pontos-recuperados": 20, "tipo":"kit de vida"},
-    {"divisao": "Escritório 1", "pontos-recuperados": 15, "tipo":"kit de vida"},
+    {"divisao": "Escritorio1", "pontos-recuperados": 15, "tipo":"kit de vida"},
     {"divisao": "Escada 2", "pontos-extra": 25, "tipo":"colete"} ]
 
 }

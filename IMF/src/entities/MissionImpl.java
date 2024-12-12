@@ -5,7 +5,9 @@
  */
 package entities;
 
+import Queue.Queue;
 import com.google.gson.annotations.SerializedName;
+import exceptions.InvalidTypeException;
 import exceptions.NullException;
 import graph.GraphMatrix;
 import interfaces.*;
@@ -13,7 +15,9 @@ import orderedUnorderedList.ArrayOrderedList;
 import orderedUnorderedList.ArrayUnorderedList;
 
 
+import java.util.Arrays;
 import java.util.Iterator;
+import java.util.LinkedList;
 
 /**
  * Estrutura de Dados - 2020-2021.
@@ -432,4 +436,94 @@ public class MissionImpl implements Mission {
 
         return s;
     }
+
+    public void enemiesAttack(Enemy enemy, double lifePoints) {
+        lifePoints -= enemy.getPower();
+    }
+
+    public ArrayUnorderedList<Enemy> moveEnemies(ArrayUnorderedList<Enemy> enemies, Division currentDivTo, double lifePoints, boolean isManuel) throws NullException, InvalidTypeException {
+        ArrayUnorderedList<Enemy> enemiesEncountered = new ArrayUnorderedList<>();
+        for (Enemy enemy :  enemies) {
+            Division currentDivision = getDivision(enemy.getCurrentDivision().getName());
+            Division[] reachableDivisions = getReachableDivisions(currentDivision.getName(), 2, enemy);
+            if (reachableDivisions != null && reachableDivisions.length > 0) {
+                String newDivisionString = getRandomDivision(reachableDivisions, enemy);
+                for (int i = 0; i < reachableDivisions.length; i++) {
+                    if (reachableDivisions[i].getName().equals(newDivisionString)) {
+                        if (getDivision(currentDivision.getName()).removeEnemy(enemy)) {
+                            enemy.setCurrentDivision(reachableDivisions[i]);
+                            getDivision(reachableDivisions[i].getName()).addEnemy(enemy);
+                            if (reachableDivisions[i].equals(currentDivTo)) {
+                                enemiesEncountered.addToRear(enemy);
+                                enemiesAttack(enemy, lifePoints);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        if (!enemiesEncountered.isEmpty() && isManuel) {
+            for (Enemy enemy : enemiesEncountered) {
+                System.out.println("O inimigo " + enemy.getName() + " entrou na sua divisão!");
+                System.out.println("Inimigo " + enemy.getName() + " atacou! Dano: " + enemy.getPower());
+            }
+        }
+        return enemiesEncountered;
+    }
+
+    public Division[] getReachableDivisions(String initialDivisionName, int maxDepth, Enemy enemy) {
+        Division[] reachableDivisions = new Division[20];
+        int count = 1;
+
+        Division initialDivision = getDivision(enemy.getDivision().getName());
+        Queue<Division> queue = new Queue<Division>();
+        Queue<Integer> depths = new Queue<Integer>();
+        reachableDivisions[0] = initialDivision;
+        queue.enqueue(initialDivision);
+        depths.enqueue(0);
+
+        while (!queue.isEmpty()) {
+            Division current = queue.dequeue();
+            int depth = depths.dequeue();
+
+            if (!current.equals(initialDivision) && count < reachableDivisions.length) {
+                reachableDivisions[count++] = current;
+            }
+
+            if (depth < maxDepth) {
+                ArrayUnorderedList<String> edges = current.getEdges();
+                for (String edge : edges) {
+                    Division neighbor = getDivision(edge);
+                    queue.enqueue(neighbor);
+                    depths.enqueue(depth + 1);
+                }
+            }
+        }
+
+        return Arrays.copyOf(reachableDivisions, count);
+    }
+
+    public String getRandomDivision(Division[] reachableDivisions, Enemy enemy) {
+        ArrayUnorderedList<String> currentDivisionEdges = enemy.getCurrentDivision().getEdges();
+        ArrayUnorderedList<String> validDivisions = new ArrayUnorderedList<>();
+        Iterator<String> iterator;
+        int count = 0;
+        for (String edge : currentDivisionEdges) {
+            for (int i = 0; i < reachableDivisions.length; i++) {
+                if (reachableDivisions[i].getName().equals(edge)) {
+                    validDivisions.addToRear(edge);
+                }
+            }
+        }
+
+        int randomIndex = (int) (Math.random() * validDivisions.size());
+        iterator = validDivisions.iterator();
+        String next = null;
+        while (iterator.hasNext() && count <= randomIndex) {
+            next = iterator.next();
+            count++;
+        }
+        return next;
+    }
+
 }
