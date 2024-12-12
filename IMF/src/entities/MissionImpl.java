@@ -346,11 +346,13 @@ public class MissionImpl implements Mission {
         ArrayUnorderedList<Division> divisions = getDivisions();
 
         for (Division division : divisions) {
-            EnemyImpl[] enemies = (EnemyImpl[]) division.getEnemies();
-            if (EnemyImpl.isValid(enemies)) {
-                for (Enemy enemy : enemies) {
-                    if (enemy.getLifePoints() == 100) {
-                        allEnemies.addToRear(enemy);
+            Enemy[] enemies =  division.getEnemies();
+            for (Enemy enemy : enemies) {
+                if(enemy!=null) {
+                    if (enemy.isValid()) {
+                        if (enemy.getLifePoints() == 100) {
+                            allEnemies.addToRear(enemy);
+                        }
                     }
                 }
             }

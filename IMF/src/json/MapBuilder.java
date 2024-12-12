@@ -44,7 +44,7 @@ public class MapBuilder extends Import{
     }
 
     public MissionImpl createMission() throws InvalidFileException {
-        MissionImpl missonJson = importMission();
+        MissionImpl missonJson = importMission(this.divisionImpls);
 
         if (!isTargetDivisionValid(missonJson)) {
             throw new InvalidFileException("Target is invalid");

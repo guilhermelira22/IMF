@@ -49,28 +49,6 @@ public class Import {
         }
     }
 
-    public MissionImpl importMission() throws InvalidFileException {
-        try {
-            String mission_name = map.get("cod-missao").getAsString();
-            Integer mission_version = map.get("versao").getAsInt();
-
-            JsonObject targetObject = map.get("alvo").getAsJsonObject();
-            String division_name = targetObject.get("divisao").getAsString();
-            String target_type = targetObject.get("tipo").getAsString();
-
-            DivisionImpl target_divisionImpl = new DivisionImpl(division_name);
-            TargetImpl missionTarget = new TargetImpl(target_divisionImpl, target_type);
-
-            MissionImpl mission = new MissionImpl(mission_name, mission_version, missionTarget);
-            if (!mission.isValid()) {
-                throw new InvalidFileException("mission is invalid");
-            }
-            return mission;
-        } catch (Exception e) {
-            throw new InvalidFileException("mission is invalid");
-        }
-    }
-
     public DivisionImpl[] importDivisions() throws FileNotFoundException, InvalidFileException, NullException, InvalidTypeException {
 
         JsonArray divisionsArray = map.getAsJsonArray("edificio");
@@ -81,6 +59,33 @@ public class Import {
             building[i] = new DivisionImpl(divisionName);
         }
         return building;
+    }
+
+    public MissionImpl importMission(DivisionImpl[] building) throws InvalidFileException {
+        try {
+            String mission_name = map.get("cod-missao").getAsString();
+            Integer mission_version = map.get("versao").getAsInt();
+
+            JsonObject targetObject = map.get("alvo").getAsJsonObject();
+            String division_name = targetObject.get("divisao").getAsString();
+            String target_type = targetObject.get("tipo").getAsString();
+
+            TargetImpl missionTarget = null;
+            for (int i = 0; i < building.length; i++) {
+                if (building[i].getName().equals(division_name)) {
+                    missionTarget = new TargetImpl(building[i], target_type);
+                }
+            }
+
+
+            MissionImpl mission = new MissionImpl(mission_name, mission_version, missionTarget);
+            if (!mission.isValid()) {
+                throw new InvalidFileException("mission is invalid");
+            }
+            return mission;
+        } catch (Exception e) {
+            throw new InvalidFileException("mission is invalid");
+        }
     }
 
 
