@@ -1,8 +1,11 @@
 package entities;
 
 import com.google.gson.annotations.SerializedName;
+import enums.Item_Type;
+import interfaces.Division;
+import interfaces.Item;
 
-public class Item {
+public class ItemImpl implements Item {
 
     private double amount;
 
@@ -11,10 +14,10 @@ public class Item {
     @SerializedName(value = "division", alternate = {"divisao"})
     private Division division;
 
-    public Item(double amount, Item_Type type, Division division) {
+    public ItemImpl(double amount, Item_Type type, DivisionImpl divisionImpl) {
         this.amount = amount;
         this.type = type;
-        this.division = division;
+        this.division = divisionImpl;
     }
 
     public double getAmount() {
@@ -39,7 +42,7 @@ public class Item {
         return this.division;
     }
 
-    public void setDivision(Division division) {
+    public void setDivision(Division divisionImpl) {
         this.division = division;
     }
 

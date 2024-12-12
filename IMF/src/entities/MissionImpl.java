@@ -6,10 +6,9 @@
 package entities;
 
 import com.google.gson.annotations.SerializedName;
-import exception.EmptyCollectionException;
 import exceptions.NullException;
 import graph.GraphMatrix;
-import graph.NetworkMatrix;
+import interfaces.*;
 import orderedUnorderedList.ArrayOrderedList;
 import orderedUnorderedList.ArrayUnorderedList;
 
@@ -27,7 +26,7 @@ import java.util.Iterator;
  * edifício,um grafo que representa o mapa do edifício e uma lista ordenada que
  * contem todas as simulações testadas para a missão.
  */
-public class Mission {
+public class MissionImpl implements Mission {
 
     /**
      * Código da missão do tipo String.
@@ -64,7 +63,7 @@ public class Mission {
     /**
      * Construtor vazio que cria uma Mission para o Tó Cruz.
      */
-    public Mission() {
+    public MissionImpl() {
     }
 
     /**
@@ -80,10 +79,10 @@ public class Mission {
      * @param division divisão alvo.
      * @param type tipo do alvo.
      */
-    public Mission(String cod, Integer version, Division division, String type) {
+    public MissionImpl(String cod, Integer version, Division division, String type) {
         this.cod = cod;
         this.version = version;
-        this.target = new Target(division, type);
+        this.target = new TargetImpl(division, type);
     }
 
     /**
@@ -96,7 +95,7 @@ public class Mission {
      * @param version versão da missão.
      * @param target instancia da classe Target.
      */
-    public Mission(String cod, Integer version, Target target) {
+    public MissionImpl(String cod, Integer version, Target target) {
         this.cod = cod;
         this.version = version;
         this.target = target;
@@ -119,7 +118,7 @@ public class Mission {
      * @param building grafo pesado(network ou rede) que representa o edifício
      *
      */
-    public Mission(String cod, Integer version, Target target, ArrayUnorderedList<Division> exitEntry, GraphMatrix<Division> building) {
+    public MissionImpl(String cod, Integer version, Target target, ArrayUnorderedList<Division> exitEntry, GraphMatrix<Division> building) {
         this.cod = cod;
         this.version = version;
         this.target = target;
@@ -209,11 +208,11 @@ public class Mission {
      * Altera o alvo da missão. Recebe como parâmetro as variaveis da classe
      * {}.
      *
-     * @param division divisão alvo.
+     * @param divisionImpl divisão alvo.
      * @param type tipo do alvo.
      */
-    public void setTarget(Division division, String type) {
-        this.target = new Target(division, type);
+    public void setTarget(Division divisionImpl, String type) {
+        this.target = new TargetImpl(divisionImpl, type);
     }
 
     /**
@@ -262,9 +261,9 @@ public class Mission {
      *
      * @return a divisão alvo num formato da classe {}
      */
-    public Division getTargetDivision() {
-        Iterator<Division> targetDivision = this.building.iteratorBFS(this.building.getFirst());
-        Division current = null;
+    public DivisionImpl getTargetDivision() {
+        Iterator<DivisionImpl> targetDivision = this.building.iteratorBFS(this.building.getFirst());
+        DivisionImpl current = null;
 
         while (targetDivision.hasNext()) {
             current = targetDivision.next();
@@ -317,9 +316,9 @@ public class Mission {
      * @return caso encontre a divisão esta é retornada, se não é retornada uma
      * divisão nula.
      */
-    public Division getDivision(String div) {
-        Iterator<Division> division = this.building.iteratorBFS(this.building.getFirst());
-        Division current = null;
+    public DivisionImpl getDivision(String div) {
+        Iterator<DivisionImpl> division = this.building.iteratorBFS(this.building.getFirst());
+        DivisionImpl current = null;
 
         while (division.hasNext()) {
             current = division.next();
@@ -347,8 +346,8 @@ public class Mission {
         ArrayUnorderedList<Division> divisions = getDivisions();
 
         for (Division division : divisions) {
-            Enemy[] enemies = division.getEnemies();
-            if (Enemy.isValid(enemies)) {
+            EnemyImpl[] enemies = (EnemyImpl[]) division.getEnemies();
+            if (EnemyImpl.isValid(enemies)) {
                 for (Enemy enemy : enemies) {
                     if (enemy.getLifePoints() == 100) {
                         allEnemies.addToRear(enemy);

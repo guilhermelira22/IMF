@@ -1,7 +1,7 @@
 package json;
 
 import com.google.gson.Gson;
-import entities.SimulationManual;
+import entities.SimulationManualImpl;
 import orderedUnorderedList.ArrayOrderedList;
 
 import java.io.FileWriter;
@@ -24,13 +24,13 @@ public class Exporter {
         }
     }
 
-    public static void exportToJson(ArrayOrderedList<SimulationManual> manual, String fileName) {
+    public static void exportToJson(ArrayOrderedList<SimulationManualImpl> manual, String fileName) {
         Iterator it = manual.iterator();
-        SimulationManual[] temp = new SimulationManual[manual.size()];
+        SimulationManualImpl[] temp = new SimulationManualImpl[manual.size()];
         int i = 0;
         while (it.hasNext()) {
-            SimulationManual simulation = (SimulationManual) it.next();
-            temp[i] = new SimulationManual(simulation.getLifePoints(), simulation.getPath(), simulation.isGetTarget());
+            SimulationManualImpl simulation = (SimulationManualImpl) it.next();
+            temp[i] = new SimulationManualImpl(simulation.getLifePoints(), simulation.getPath(), simulation.isGetTarget());
             i++;
         }
         Exporter.exporter(temp, fileName);

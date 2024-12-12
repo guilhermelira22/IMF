@@ -5,7 +5,8 @@
  */
 package entities;
 
-import com.google.gson.annotations.SerializedName;
+import interfaces.Division;
+import interfaces.Enemy;
 
 /**
  * Estrutura de Dados - 2020-2021.
@@ -17,7 +18,7 @@ import com.google.gson.annotations.SerializedName;
  * ser encontrado nas Divisões, este possui um power(dano) que fere o Tó Cruz e
  * consequentemente retira-lhe pontos de vida.
  */
-public class Enemy {
+public class EnemyImpl implements Enemy {
 
     private static final Double LIFE_DEFAULT = 100.0;
     /**
@@ -42,7 +43,7 @@ public class Enemy {
     /**
      * Construtor vazio para o inimigo.
      */
-    public Enemy() {
+    public EnemyImpl() {
     }
 
     /**
@@ -52,7 +53,7 @@ public class Enemy {
      * @param name name do inimigo.
      * @param power power(dano) do inimigo.
      */
-    public Enemy(String name, Double power) {
+    public EnemyImpl(String name, Double power) {
         this.name = name;
         if (power > 0) {
             this.power = power;
@@ -69,17 +70,17 @@ public class Enemy {
      *
      * @param name name do inimigo.
      * @param power power(dano) do inimigo.
-     * @param division string que representa o nome da divisão onde se encontra
+     * @param divisionImpl string que representa o nome da divisão onde se encontra
      * o inimigo.
      */
-    public Enemy(String name, Double power, Division division) {
+    public EnemyImpl(String name, Double power, DivisionImpl divisionImpl) {
         this.name = name;
         if (power > 0) {
             this.power = power;
         } else {
             this.power = 0.0;
         }
-        this.division = division;
+        this.division = divisionImpl;
         lifePoints = LIFE_DEFAULT;
     }
 
@@ -174,7 +175,7 @@ public class Enemy {
      * @param enemies array de inimigos que se pretende validar.
      * @return verdadeiro se o array de inimigos for valido, falso caso contrario.
      */
-    public static boolean isValid(Enemy[] enemies) {
+    public static boolean isValid(EnemyImpl[] enemies) {
         boolean send = true;
 
         if (enemies.length == 0) {

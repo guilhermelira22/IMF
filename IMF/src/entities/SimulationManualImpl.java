@@ -8,6 +8,8 @@ package entities;
 
 import Queue.Queue;
 import exceptions.UnsupportedDataTypeException;
+import interfaces.Division;
+import interfaces.SimulationManual;
 
 /**
  * Estrutura de Dados - 2020-2021.
@@ -19,7 +21,7 @@ import exceptions.UnsupportedDataTypeException;
  * que o Tó Cruz terminou a missão, o caminho que percorreu e um valor booleano
  * que nos indica se ele apanhou ou não o alvo.
  */
-public class SimulationManual implements Comparable {
+public class SimulationManualImpl implements Comparable, SimulationManual {
 
     /**
      * Double que representa o numero de vida com que o Tó Cruz terminou a
@@ -41,7 +43,7 @@ public class SimulationManual implements Comparable {
     /**
      * Construtor vazio que cria uma Simulação Manual
      */
-    public SimulationManual() {
+    public SimulationManualImpl() {
     }
 
     /**
@@ -56,7 +58,7 @@ public class SimulationManual implements Comparable {
      * @param target valor booleano que representa se o alvo foi ou não
      * resgatado.
      */
-    public SimulationManual(Double lifePoints, Queue<Division> path, boolean target) {
+    public SimulationManualImpl(Double lifePoints, Queue<Division> path, boolean target) {
         this.lifePoints = lifePoints;
         this.getTarget = target;
         this.path = path;

@@ -4,16 +4,15 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
-import entities.Division;
-import entities.Enemy;
-import entities.Item;
-import entities.Mission;
-import entities.SimulationManual;
+import entities.*;
+import entities.MissionImpl;
 import exceptions.InvalidFileException;
 import exceptions.InvalidTypeException;
 import exceptions.NullException;
 import graph.GraphMatrix;
-import graph.NetworkMatrix;
+import interfaces.Division;
+import interfaces.Enemy;
+import interfaces.Item;
 import orderedUnorderedList.ArrayUnorderedList;
 
 import java.io.BufferedReader;
@@ -25,27 +24,27 @@ public class MapBuilder extends Import{
     private String file;
     private static String pathExport = "simulations/";
     private static String EXTENSION = ".json";
-    private Division [] divisions;
+    private DivisionImpl[] divisionImpls;
     private Enemy[] enemies;
     private String[][] edges;
-    private Item[] items;
+    private ItemImpl[] items;
     private ArrayUnorderedList<Division> entriesExits;
     private GraphMatrix<Division> building;
 
     public MapBuilder(String file) throws FileNotFoundException, InvalidFileException, NullException, InvalidTypeException {
         super(file);
         this.file = file;
-        this.divisions = importDivisions();
-        this.enemies = importEnemies(this.divisions);
-        this.items = importItems(this.divisions);
+        this.divisionImpls = importDivisions();
+        this.enemies = importEnemies(this.divisionImpls);
+        this.items = importItems(this.divisionImpls);
         this.edges = importEdges();
-        this.entriesExits = importEntryExits(this.divisions);
+        this.entriesExits = importEntryExits(this.divisionImpls);
         this.building = new GraphMatrix<>();
         createBuilding();
     }
 
-    public Mission createMission() throws InvalidFileException {
-        Mission missonJson = importMission();
+    public MissionImpl createMission() throws InvalidFileException {
+        MissionImpl missonJson = importMission();
 
         if (!isTargetDivisionValid(missonJson)) {
             throw new InvalidFileException("Target is invalid");
@@ -54,12 +53,12 @@ public class MapBuilder extends Import{
         } else if (!isDivisionEdgesValid()) {
             throw new InvalidFileException("Edges is invalid");
         }
-        Mission mission = new Mission(missonJson.getCod(), missonJson.getVersion(), missonJson.getTarget(), entriesExits, building);
+        MissionImpl mission = new MissionImpl(missonJson.getCod(), missonJson.getVersion(), missonJson.getTarget(), entriesExits, building);
 
         return mission;
     }
 
-    public Mission readJsonLeaderboard(Mission mission) throws InvalidFileException {
+    public MissionImpl readJsonLeaderboard(MissionImpl mission) throws InvalidFileException {
         String path = pathExport + this.file + EXTENSION;
         File f = new File(path);
         if (f.exists()) {
@@ -69,10 +68,10 @@ public class MapBuilder extends Import{
                 element = element.getAsJsonArray();
 
                 JsonArray simulationJson = (JsonArray) element;
-                SimulationManual[] simulation = new SimulationManual[simulationJson.size()];
+                SimulationManualImpl[] simulation = new SimulationManualImpl[simulationJson.size()];
 
                 for (int i = 0; i < simulationJson.size(); i++) {
-                    simulation[i] = new Gson().fromJson(simulationJson.get(i), SimulationManual.class);
+                    simulation[i] = new Gson().fromJson(simulationJson.get(i), SimulationManualImpl.class);
                     mission.addSimulation(simulation[i]);
                 }
 
@@ -85,8 +84,8 @@ public class MapBuilder extends Import{
     }
 
     private void createBuilding(){
-        for(int i=0; i< divisions.length;i++){
-            building.addVertex(divisions[i]);
+        for(int i = 0; i< divisionImpls.length; i++){
+            building.addVertex(divisionImpls[i]);
         }
         stablishConnections();
     }
@@ -96,34 +95,34 @@ public class MapBuilder extends Import{
             String fromName = edge[0];
             String toName = edge[1];
 
-            Division fromDivision = null;
-            Division toDivision = null;
+            DivisionImpl fromDivisionImpl = null;
+            DivisionImpl toDivisionImpl = null;
 
-            for (Division division : divisions) {
-                if (division.getName().equals(fromName)) {
-                    fromDivision = division;
+            for (DivisionImpl divisionImpl : divisionImpls) {
+                if (divisionImpl.getName().equals(fromName)) {
+                    fromDivisionImpl = divisionImpl;
                 }
-                if (division.getName().equals(toName)) {
-                    toDivision = division;
+                if (divisionImpl.getName().equals(toName)) {
+                    toDivisionImpl = divisionImpl;
                 }
-                if (fromDivision != null && toDivision != null) {
+                if (fromDivisionImpl != null && toDivisionImpl != null) {
                     break;
                 }
             }
 
-            if (fromDivision != null && toDivision != null) {
-                building.addEdge(fromDivision, toDivision);
+            if (fromDivisionImpl != null && toDivisionImpl != null) {
+                building.addEdge(fromDivisionImpl, toDivisionImpl);
 
-                fromDivision.getEdges().addToRear(toDivision.getName());
-                toDivision.getEdges().addToRear(fromDivision.getName());
+                fromDivisionImpl.getEdges().addToRear(toDivisionImpl.getName());
+                toDivisionImpl.getEdges().addToRear(fromDivisionImpl.getName());
             }
         }
     }
 
 
-    public boolean isTargetDivisionValid(Mission m) {
-        for (int i = 0; i < divisions.length; i++) {
-            if (m.getTarget().getDivision().getName().equals(divisions[i].getName())) {
+    public boolean isTargetDivisionValid(MissionImpl m) {
+        for (int i = 0; i < divisionImpls.length; i++) {
+            if (m.getTarget().getDivision().getName().equals(divisionImpls[i].getName())) {
                 return true;
             }
         }
@@ -133,8 +132,8 @@ public class MapBuilder extends Import{
     public boolean isEntriesExitsDivisionValid() {
         int count = 0;
 
-        for (int i = 0; i < divisions.length; i++) {
-            if (entriesExits.contains(divisions[i])) {
+        for (int i = 0; i < divisionImpls.length; i++) {
+            if (entriesExits.contains(divisionImpls[i])) {
                 count++;
             }
         }
@@ -145,8 +144,8 @@ public class MapBuilder extends Import{
     public boolean isDivisionEdgesValid(){
         for (int i = 0; i < edges.length; i++) {
             int find = 0;
-            for (int j = 0; j < divisions.length; j++) {
-                if ((divisions[j].getName().compareTo(edges[i][0]) == 0) || (divisions[j].getName().compareTo(edges[i][1]) == 0)) {
+            for (int j = 0; j < divisionImpls.length; j++) {
+                if ((divisionImpls[j].getName().compareTo(edges[i][0]) == 0) || (divisionImpls[j].getName().compareTo(edges[i][1]) == 0)) {
                     find++;
                 }
             }

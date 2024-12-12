@@ -7,9 +7,10 @@ package entities;
 
 import exceptions.InvalidTypeException;
 import exceptions.NullException;
+import interfaces.Division;
+import interfaces.Enemy;
+import interfaces.Item;
 import orderedUnorderedList.ArrayUnorderedList;
-
-import java.util.Arrays;
 
 /**
  * Estrutura de Dados - 2020-2021.
@@ -20,7 +21,7 @@ import java.util.Arrays;
  * Classe Division representa uma divisão do edifício na missão do Tó Cruz. A
  * divisão pode conter inimigos e possuir caminhos para outras divisões.
  */
-public class Division {
+public class DivisionImpl implements Division {
 
     /**
      * Capacidade por defeito para o número de inimigos numa divisão.
@@ -57,7 +58,7 @@ public class Division {
     /**
      * Construtor vazio que cria uma divisão.
      */
-    public Division() {
+    public DivisionImpl() {
     }
 
     /**
@@ -72,10 +73,10 @@ public class Division {
      * @param entryExit Boleano que identifica que se trata de uma divisão de
      * entrada ou saída.
      */
-    public Division(String name, boolean entryExit) {
+    public DivisionImpl(String name, boolean entryExit) {
         this.name = name;
         this.entryExit = entryExit;
-        this.enemies = new Enemy[DEFAULT_CAPACITY];
+        this.enemies = new EnemyImpl[DEFAULT_CAPACITY];
         this.numEnemies = 0;
         this.edges = new ArrayUnorderedList<>();
         this.item = null;
@@ -91,10 +92,10 @@ public class Division {
      *
      * @param name String que identifica a divisão.
      */
-    public Division(String name) {
+    public DivisionImpl(String name) {
         this.name = name;
         this.entryExit = false;
-        this.enemies = new Enemy[DEFAULT_CAPACITY];
+        this.enemies = new EnemyImpl[DEFAULT_CAPACITY];
         this.numEnemies = 0;
         this.edges = new ArrayUnorderedList<>();
     }
@@ -111,7 +112,7 @@ public class Division {
      * entrada ou saída.
      * @param enemies Array com os inimigos que a divisão contém.
      */
-    public Division(String name, boolean entryExit, Enemy[] enemies) {
+    public DivisionImpl(String name, boolean entryExit, EnemyImpl[] enemies) {
         this.name = name;
         this.entryExit = entryExit;
         this.enemies = enemies;
@@ -220,21 +221,21 @@ public class Division {
     /**
      * Adiciona um novo inimigo ao array de inimigos que a divisão possui.
      *
-     * @param newEnemy novo inimigo instancia da classe {}
+     * @param newEnemyImpl novo inimigo instancia da classe {}
      * @throws NullException caso o inimigo seja do tipo NULL.
      * @throws InvalidTypeException caso o inimigo ja se encontre no array.
      */
-    public void addEnemy(Enemy newEnemy) throws NullException, InvalidTypeException {
-        if (newEnemy == null) {
+    public void addEnemy(Enemy newEnemyImpl) throws NullException, InvalidTypeException {
+        if (newEnemyImpl == null) {
             throw new NullException("");
         }
         if (numEnemies == enemies.length) {
             expandCapacity();
         }
-        if (findEnemy(newEnemy.getName()) != -1) {
+        if (findEnemy(newEnemyImpl.getName()) != -1) {
             throw new InvalidTypeException("");
         }
-        enemies[numEnemies] = newEnemy;
+        enemies[numEnemies] = newEnemyImpl;
         numEnemies++;
 
     }
@@ -270,7 +271,7 @@ public class Division {
      *
      */
     protected void expandCapacity() {
-        Enemy[] newEnemies = new Enemy[enemies.length * 2];
+        EnemyImpl[] newEnemies = new EnemyImpl[enemies.length * 2];
         System.arraycopy(enemies, 0, newEnemies, 0, numEnemies);
         enemies = newEnemies;
         /* Enemy[] newEnemies = new Enemy[this.numEnemies + DEFAULT_CAPACITY];
@@ -306,7 +307,7 @@ public class Division {
      * @return uma divisão valida, caso encontre o nome da divisão no array.
      * recebido como parametro, caso contario retorna uma divisão nula.
      */
-    public static Division getDivision(Division[] div, String division) {
+    public static DivisionImpl getDivision(DivisionImpl[] div, String division) {
 
         for (int i = 0; i < div.length; i++) {
             if (div[i].getName().compareTo(division) == 0) {

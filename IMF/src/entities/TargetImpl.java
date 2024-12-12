@@ -6,6 +6,8 @@
 package entities;
 
 import com.google.gson.annotations.SerializedName;
+import interfaces.Division;
+import interfaces.Target;
 
 /**
  * Estrutura de Dados - 2020-2021.
@@ -18,7 +20,7 @@ import com.google.gson.annotations.SerializedName;
  * pois é onde se encontra o alvo, possui tambem u ma string que representa o
  * tipo do alvo.
  */
-public class Target {
+public class TargetImpl implements Target {
 
     /**
      * Representa a divisão alvo, ou seja a divisão onde se deseja chegar no
@@ -36,7 +38,7 @@ public class Target {
     /**
      * Construtor vazio que cria um alvo.
      */
-    public Target() {
+    public TargetImpl() {
     }
 
     /**
@@ -46,7 +48,7 @@ public class Target {
      * @param division divisão alvo.
      * @param type tipo do alvo.
      */
-    public Target(Division division, String type) {
+    public TargetImpl(Division division, String type) {
         this.division = division;
         this.type = type;
     }
