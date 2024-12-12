@@ -18,7 +18,7 @@
     "Escritorio1",
     "Escritório 2",
     "EscadadeEmergencia",
-    "Corredor 1",
+    "Corredor1",
     "Escada 2",
     "Porteiro",
     "Escada 1",
@@ -46,19 +46,19 @@
       "Escada 2"
     ],
     [
-      "Corredor 1",
+      "Corredor1",
       "Escada 2"
     ],
     [
-      "Corredor 1",
+      "Corredor1",
       "Escritorio1"
     ],
     [
-      "Corredor 1",
+      "Corredor1",
       "Escritório 2"
     ],
     [
-      "Corredor 1",
+      "Corredor1",
       "Escada 3"
     ],
     [
@@ -119,7 +119,7 @@
     {
       "nome": "badguy2",
       "poder": 15,
-      "divisao": "EscadadeEmergencia"
+      "divisao": "Escritorio1"
     },
     {
       "nome": "badguy3",
