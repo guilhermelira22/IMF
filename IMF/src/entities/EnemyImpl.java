@@ -7,6 +7,8 @@ package entities;
 
 import interfaces.Division;
 import interfaces.Enemy;
+import com.google.gson.annotations.SerializedName;
+import orderedUnorderedList.ArrayUnorderedList;
 
 /**
  * Estrutura de Dados - 2020-2021.
@@ -36,7 +38,7 @@ public class EnemyImpl implements Enemy {
      */
     private Division division;
 
-    private String inicialDivision;
+    private Division currentDivision;
 
     private Double lifePoints;
 
@@ -82,6 +84,7 @@ public class EnemyImpl implements Enemy {
         }
         this.division = divisionImpl;
         lifePoints = LIFE_DEFAULT;
+        currentDivision = division;
     }
 
     /**
@@ -144,8 +147,20 @@ public class EnemyImpl implements Enemy {
         this.division = division;
     }
 
-    public String getInicialDivision() {
-        return inicialDivision;
+    public Division getCurrentDivision() {
+        return currentDivision;
+    }
+
+    public void setCurrentDivision(Division currentDivision) {
+        this.currentDivision = currentDivision;
+    }
+
+    public ArrayUnorderedList<String> adjecentDivisions() {
+        ArrayUnorderedList<String> divisions = new ArrayUnorderedList<String>();
+        for (int i = 0; i < currentDivision.getEdges().size(); i++) {
+            divisions = currentDivision.getEdges();
+        }
+        return divisions;
     }
 
     public Double getLifePoints() {
@@ -164,7 +179,7 @@ public class EnemyImpl implements Enemy {
      * @return verdadeiro se o inimigo for valido, falso caso contrario.
      */
     public boolean isValid() {
-        return (this.name != null && !this.name.isBlank() && this.division != null && !this.division.getName().isBlank() && this.power != null && this.power >= 0);
+        return (this.name != null && !this.name.isBlank() && this.currentDivision != null && !this.currentDivision.getName().isBlank() && this.power != null && this.power >= 0);
     }
 
     /**

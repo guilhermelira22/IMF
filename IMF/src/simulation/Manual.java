@@ -4,6 +4,7 @@ import Queue.Queue;
 import entities.*;
 import enums.Item_Type;
 import exceptions.InvalidFileException;
+import exceptions.InvalidTypeException;
 import exceptions.NullException;
 import graph.GraphMatrix;
 import interfaces.Division;
@@ -15,6 +16,7 @@ import stack.LinkedStack;
 
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.Random;
 import java.util.Scanner;
 
 public class Manual {
@@ -41,7 +43,7 @@ public class Manual {
         this.backpack = new LinkedStack<>();
     }
 
-    public void start() throws InvalidFileException {
+    public void start() throws InvalidFileException, NullException, InvalidTypeException {
         //System.out.println(getMissionDetails());
 
         chooseStartDivision();
@@ -81,7 +83,7 @@ public class Manual {
         }
     }
 
-    private void playGame() {
+    private void playGame() throws NullException, InvalidTypeException {
         Division target = mission.getTarget().getDivision();
 
         while (lifePoints > 0 && !flagLeft) {
@@ -104,7 +106,7 @@ public class Manual {
         System.out.println("\n1. Esperar\n2. Tomar kit médico\n");
     }
 
-    private void chooseOption() {
+    private void chooseOption() throws NullException, InvalidTypeException {
         Scanner scan = new Scanner(System.in, "ISO-8859-1");
         boolean validChoice = false;
         showRealTimeInfo();
@@ -212,34 +214,42 @@ public class Manual {
         }
     }
 
-    private void moveEnemies() {
+    private void moveEnemies() throws NullException, InvalidTypeException {
         for (Enemy enemy : mission.getAllEnemies()) {
-            Division currentDivision = mission.getDivision(enemy.getDivision().getName());
-            Division[] reachableDivisionImpls = getReachableDivisions(currentDivision.getName(), 2);
-            if (reachableDivisionImpls != null && reachableDivisionImpls.length > 0) {
-                Division newDivisionImpl = getRandomDivision(reachableDivisionImpls);
-                enemy.setDivision(newDivisionImpl);
+            Division currentDivision = mission.getDivision(enemy.getCurrentDivision().getName());
+            Division[] reachableDivisions = getReachableDivisions(currentDivision.getName(), 2, enemy);
+            if (reachableDivisions != null && reachableDivisions.length > 0) {
+                String newDivisionString = getRandomDivision(reachableDivisions, enemy);
+                for (int i = 0; i < reachableDivisions.length; i++) {
+                    if (reachableDivisions[i].getName().equals(newDivisionString)) {
+                        if (mission.getDivision(currentDivision.getName()).removeEnemy(enemy)) {
+                            enemy.setCurrentDivision(reachableDivisions[i]);
+                            mission.getDivision(reachableDivisions[i].getName()).addEnemy(enemy);
+                        }
+                    }
+                }
+
             }
         }
     }
 
-    public Division[] getReachableDivisions(String initialDivisionName, int maxDepth) {
-        Division[] reachableDivisionImpls = new Division[20];
-        int count = 0;
+    public Division[] getReachableDivisions(String initialDivisionName, int maxDepth, Enemy enemy) {
+        Division[] reachableDivisions = new Division[20];
+        int count = 1;
 
-        Division initialDivisionImpl = mission.getDivision(initialDivisionName);
+        Division initialDivision = mission.getDivision(enemy.getDivision().getName());
         Queue<Division> queue = new Queue<Division>();
         Queue<Integer> depths = new Queue<Integer>();
-
-        queue.enqueue(initialDivisionImpl);
+        reachableDivisions[0] = initialDivision;
+        queue.enqueue(initialDivision);
         depths.enqueue(0);
 
         while (!queue.isEmpty()) {
             Division current = queue.dequeue();
             int depth = depths.dequeue();
 
-            if (!current.equals(initialDivisionImpl) && count < reachableDivisionImpls.length) {
-                reachableDivisionImpls[count++] = current;
+            if (!current.equals(initialDivision) && count < reachableDivisions.length) {
+                reachableDivisions[count++] = current;
             }
 
             if (depth < maxDepth) {
@@ -252,18 +262,36 @@ public class Manual {
             }
         }
 
-        return Arrays.copyOf(reachableDivisionImpls, count);
+        return Arrays.copyOf(reachableDivisions, count);
     }
 
-    public Division getRandomDivision(Division[] reachableDivisionImpls) {
-        int randomIndex = (int) (Math.random() * reachableDivisionImpls.length);
-        return reachableDivisionImpls[randomIndex];
+    public String getRandomDivision(Division[] reachableDivisions, Enemy enemy) {
+        ArrayUnorderedList<String> currentDivisionEdges = enemy.getCurrentDivision().getEdges();
+        ArrayUnorderedList<String> validDivisions = new ArrayUnorderedList<>();
+        Iterator<String> iterator;
+        int count = 0;
+        for (String edge : currentDivisionEdges) {
+            for (int i = 0; i < reachableDivisions.length; i++) {
+                if (reachableDivisions[i].getName().equals(edge)) {
+                    validDivisions.addToRear(edge);
+                }
+            }
+        }
+
+        int randomIndex = (int) (Math.random() * validDivisions.size());
+        iterator = validDivisions.iterator();
+        String next = null;
+        while (iterator.hasNext() && count <= randomIndex) {
+            next = iterator.next();
+            count++;
+        }
+        return next;
     }
 
     private void showRealTimeInfo() {
         System.out.println("Inimigos:");
         for (Enemy enemy : mission.getAllEnemies()) {
-            System.out.println("Inimigo em " + enemy.getDivision());
+            System.out.println("Inimigo em " + enemy.getCurrentDivision());
         }
 
         System.out.println("Kits médicos:");
@@ -290,15 +318,15 @@ public class Manual {
 
     public String getBestPathToClosestKit() {
         GraphMatrix<Division> graph = mission.getBuilding();
-        Division currentDivisionImpl = currentDiv;
+        Division currentDivision = currentDiv;
 
         int shortestDistance = Integer.MAX_VALUE;
         String bestPath = "Nenhum kit médico disponível.";
 
         for (Item kit : mission.getAllItems()) {
             if (kit.getDivision() != null) {
-                Division kitDivisionImpl = kit.getDivision();
-                Iterator<DivisionImpl> pathIterator = graph.iteratorShortestPath(currentDivisionImpl, kitDivisionImpl);
+                Division kitDivision = kit.getDivision();
+                Iterator<DivisionImpl> pathIterator = graph.iteratorShortestPath(currentDivision, kitDivision);
                 int pathLength = calculatePathLength(pathIterator);
 
                 if (pathLength < shortestDistance) {
@@ -341,9 +369,9 @@ public class Manual {
         StringBuilder finalPath = new StringBuilder("Caminho percorrido:\n");
         Queue<Division> tempPath = new Queue<Division>();
         while (!path.isEmpty()) {
-            Division divisionImpl = path.dequeue();
-            tempPath.enqueue(divisionImpl);
-            finalPath.append("-> " + divisionImpl.getName() + "\n");
+            Division division = path.dequeue();
+            tempPath.enqueue(division);
+            finalPath.append("-> " + division.getName() + "\n");
         }
 
         this.path = tempPath;

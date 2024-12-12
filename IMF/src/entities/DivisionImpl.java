@@ -10,7 +10,10 @@ import exceptions.NullException;
 import interfaces.Division;
 import interfaces.Enemy;
 import interfaces.Item;
+import list.LinkedList;
 import orderedUnorderedList.ArrayUnorderedList;
+
+import java.util.Arrays;
 
 /**
  * Estrutura de Dados - 2020-2021.
@@ -221,24 +224,74 @@ public class DivisionImpl implements Division {
     /**
      * Adiciona um novo inimigo ao array de inimigos que a divisão possui.
      *
-     * @param newEnemyImpl novo inimigo instancia da classe {}
+     * @param newEnemy novo inimigo instancia da classe {}
      * @throws NullException caso o inimigo seja do tipo NULL.
      * @throws InvalidTypeException caso o inimigo ja se encontre no array.
      */
-    public void addEnemy(Enemy newEnemyImpl) throws NullException, InvalidTypeException {
-        if (newEnemyImpl == null) {
+    public void addEnemy(Enemy newEnemy) throws NullException, InvalidTypeException {
+        if (newEnemy == null) {
             throw new NullException("");
         }
         if (numEnemies == enemies.length) {
             expandCapacity();
         }
-        if (findEnemy(newEnemyImpl.getName()) != -1) {
+        if (findEnemy(newEnemy.getName()) != -1) {
             throw new InvalidTypeException("");
         }
-        enemies[numEnemies] = newEnemyImpl;
+        enemies[numEnemies] = newEnemy;
         numEnemies++;
 
     }
+
+    public boolean removeEnemy(Enemy enemy) {
+        int index = -1;
+        for (int i = 0; i < numEnemies; i++) {
+            if (enemies[i].equals(enemy)) {
+                index = i;
+                break;
+            }
+        }
+
+        if (index == -1) {
+            return false;
+        }
+
+        for (int i = index; i < numEnemies - 1; i++) {
+            enemies[i] = enemies[i + 1];
+        }
+
+        enemies[numEnemies - 1] = null;
+        numEnemies--;
+
+        reduceEnemies();
+
+        return true;
+    }
+
+    private void reduceEnemies() {
+        // Conta os inimigos não nulos
+        int validCount = 0;
+        for (int i = 0; i < numEnemies; i++) {
+            if (enemies[i] != null) {
+                validCount++;
+            }
+        }
+
+        // Cria um novo array com o tamanho exato
+        Enemy[] newEnemies = new Enemy[validCount];
+        int index = 0;
+
+        // Copia os elementos não nulos para o novo array
+        for (int i = 0; i < numEnemies; i++) {
+            if (enemies[i] != null) {
+                newEnemies[index++] = enemies[i];
+            }
+        }
+
+        // Substitui o array antigo pelo novo
+        enemies = newEnemies;
+    }
+
 
     /**
      * Procura um inimigo no array de inimigos atraves do seu nome. Caso o
@@ -271,7 +324,7 @@ public class DivisionImpl implements Division {
      *
      */
     protected void expandCapacity() {
-        EnemyImpl[] newEnemies = new EnemyImpl[enemies.length * 2];
+        EnemyImpl[] newEnemies = new EnemyImpl[enemies.length + DEFAULT_CAPACITY];
         System.arraycopy(enemies, 0, newEnemies, 0, numEnemies);
         enemies = newEnemies;
         /* Enemy[] newEnemies = new Enemy[this.numEnemies + DEFAULT_CAPACITY];
