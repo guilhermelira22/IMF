@@ -269,7 +269,6 @@ public class DivisionImpl implements Division {
     }
 
     private void reduceEnemies() {
-        // Conta os inimigos não nulos
         int validCount = 0;
         for (int i = 0; i < numEnemies; i++) {
             if (enemies[i] != null) {
@@ -277,18 +276,15 @@ public class DivisionImpl implements Division {
             }
         }
 
-        // Cria um novo array com o tamanho exato
         Enemy[] newEnemies = new Enemy[validCount];
         int index = 0;
 
-        // Copia os elementos não nulos para o novo array
         for (int i = 0; i < numEnemies; i++) {
             if (enemies[i] != null) {
                 newEnemies[index++] = enemies[i];
             }
         }
 
-        // Substitui o array antigo pelo novo
         enemies = newEnemies;
     }
 
