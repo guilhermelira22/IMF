@@ -14,26 +14,23 @@ import interfaces.Mission;
 import orderedUnorderedList.ArrayUnorderedList;
 import stack.LinkedStack;
 
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.Random;
-import java.util.Scanner;
+import java.util.*;
 
 public class Manual {
 
-    private static final Double LIFE_DEFAULT = 500.0;
+    private static final Double LIFE_DEFAULT = 100.0;
     private static final int POWER = 40;
     private static final String STRING_AUX = "\n*-*-*-*-*-*-*-*-*\n";
 
     private Queue<Division> path;
-    private Mission mission;
+    private MissionImpl mission;
     private double lifePoints;
     private boolean flagLeft;
     private boolean flagTarget;
     private Division currentDiv;
     private LinkedStack<Item> backpack;
 
-    public Manual(Mission mission) {
+    public Manual(MissionImpl mission) {
         this.mission = mission;
         this.lifePoints = LIFE_DEFAULT;
         this.flagLeft = false;
@@ -44,7 +41,6 @@ public class Manual {
     }
 
     public void start() throws InvalidFileException, NullException, InvalidTypeException {
-        //System.out.println(getMissionDetails());
 
         chooseStartDivision();
 
@@ -74,15 +70,22 @@ public class Manual {
             if (chosenDiv != null && mission.getDivision(choice).getName().equals(choice)) {
                 currentDiv = chosenDiv;
                 path.enqueue(currentDiv);
-                if (currentDiv.getEnemies() != null) {
+                if (currentDiv.sizeEnemies() != 0) {
                     System.out.println("Entrou numa divisão com inimigos! Divisão Atual: " + currentDiv.getName());
                     attackAllEnemies();
                     lifePoints -= currentDiv.getEnemiesPower();
-                    moveEnemies();
-                    showRealTimeInfo();
-                    encounter();
+                    for (Enemy enemy : currentDiv.getEnemies()) {
+                        System.out.println("Inimigo " + enemy.getName() + " atacou! Dano: " + enemy.getPower());
+                    }
+                    if (currentDiv.sizeEnemies() != 0) {
+                        mission.moveEnemies(mission.getAllEnemies(), currentDiv, lifePoints, true);
+                        encounter();
+                    }
                 } else {
                     System.out.println("Pontos de Vida: " + lifePoints + "\nDivisão Atual: " + currentDiv.getName());
+                }
+                if (addMedicakKit()) {
+                    System.out.println("Pegou um kit médico!");
                 }
                 validChoice = true;
             } else {
@@ -130,34 +133,55 @@ public class Manual {
                 currentDiv = mission.getDivision(choice);
                 path.enqueue(currentDiv);
 
-                if (currentDiv.getEnemies().length != 0) {
+                if (currentDiv.sizeEnemies() != 0) {
                     System.out.println("Entrou numa divisão com inimigos! Divisão Atual: " + currentDiv.getName());
                     attackAllEnemies();
                     lifePoints -= currentDiv.getEnemiesPower();
-                    moveEnemies();
-                    showRealTimeInfo();
-                    encounter();
+                    if (currentDiv.sizeEnemies() != 0) {
+                        mission.moveEnemies(mission.getAllEnemies(), currentDiv, lifePoints, true);
+                        encounter();
+                    }
                 } else {
                     System.out.println("Pontos de Vida: " + lifePoints + "\nDivisão Atual: " + currentDiv.getName());
-                    moveEnemies();
-                    showRealTimeInfo();
+                    mission.moveEnemies(mission.getAllEnemies(), currentDiv, lifePoints, true);
+                    if (currentDiv.sizeEnemies() != 0) {
+                        encounter();
+                    }
+                }
+                if (addMedicakKit()) {
+                    System.out.println("Pegou um kit médico!");
                 }
                 validChoice = true;
 
             } else if (choice.equals("1")) {
                 System.out.println("Esperou na divisão: " + currentDiv.getName());
-                moveEnemies();
-                showRealTimeInfo();
+                mission.moveEnemies(mission.getAllEnemies(), currentDiv, lifePoints, true);
+                validChoice = true;
             } else if (choice.equals("2")) {
                 useMedicalKit();
-                moveEnemies();
-                showRealTimeInfo();
-                break;
+                validChoice = true;
             } else if (choice.equals("3") && currentDiv.isEntryExit()) {
                 finishMission(mission.getTarget().getDivision());
+                validChoice = true;
             } else {
                 System.out.println("Opção inválida, tente novamente.");
                 break;
+            }
+        }
+    }
+
+    protected void attackAllEnemies() {
+        Enemy[] enemies = currentDiv.getEnemies();
+        int j = enemies.length;
+        for (int i = 0; i < j; i++) {
+            enemies[i].setLifePoints(enemies[i].getLifePoints() - POWER);
+            if (enemies[i].getLifePoints() <= 0) {
+                System.out.println("Matou o inimigo: " + enemies[i].getName());
+                currentDiv.removeEnemy(enemies[i]);
+                i--;
+                j--;
+            } else {
+                System.out.println("Atacou o inimigo " + enemies[i].getName() + "! Pontos de vida do inimigo: " + enemies[i].getLifePoints());
             }
         }
     }
@@ -192,8 +216,7 @@ public class Manual {
                 break;
             }
 
-            moveEnemies();
-            showRealTimeInfo();
+            mission.moveEnemies(mission.getAllEnemies(), currentDiv, lifePoints, true);
         }
     }
 
@@ -212,40 +235,39 @@ public class Manual {
         System.out.println("Inimigo " + enemy.getName() + " atacou! Dano: " + enemy.getPower());
     }
 
-    private void attackAllEnemies() {
-        Enemy[] enemies = currentDiv.getEnemies();
-        int j = enemies.length;
-        for (int i = 0; i < j; i++) {
-            enemies[i].setLifePoints(enemies[i].getLifePoints() - POWER);
-            if (enemies[i].getLifePoints() <= 0) {
-                System.out.println("Matou o inimigo: " + enemies[i].getName());
-                currentDiv.removeEnemy(enemies[i]);
-                i--;
-                j--;
-            } else {
-                System.out.println("Atacou o inimigo " + enemies[i].getName() + "! Pontos de vida do inimigo: " + enemies[i].getLifePoints());
-            }
-        }
-    }
-
-    private void useMedicalKit() {
+    private void useMedicalKit() throws NullException, InvalidTypeException {
         if (backpack.isEmpty()) {
             System.out.println("Nenhum kit médico na mochila.");
         } else {
             Item medicalKit = backpack.pop();
-            lifePoints += medicalKit.getAmount();
-            if (lifePoints > 100) {
-                lifePoints = 100;
+            if (lifePoints != 100) {
+                lifePoints += medicalKit.getAmount();
+                if (lifePoints > 100) {
+                    lifePoints = 100;
+                }
+                System.out.println("Usou kit médico! Pontos de vida: " + lifePoints);
+            } else {
+                System.out.println("Já está com 100 pontos de vida.");
             }
-            System.out.println("Usou kit médico! Pontos de vida: " + lifePoints);
+            mission.moveEnemies(mission.getAllEnemies(), currentDiv, lifePoints, true);
         }
+    }
+
+    private boolean addMedicakKit() {
+        if (currentDiv.getItem() != null) {
+            if (currentDiv.getItem().getItemType() == Item_Type.KIT) {
+                backpack.push(currentDiv.getItem());
+                return true;
+            }
+        }
+        return false;
     }
 
     private void checkMissionStatus(Division target) {
         if (lifePoints <= 0) {
             System.out.println("Missão falhou! Tó Cruz perdeu toda a vida.");
             flagLeft = true;
-        } else if (currentDiv.getName().equals(target) && !flagTarget) {
+        } else if (currentDiv.getName().equals(target.getName()) && !flagTarget) {
             System.out.println("Alvo adquirido com sucesso!");
             flagTarget = true;
         }
@@ -263,84 +285,6 @@ public class Manual {
                 System.out.println("Missão falhou! Você não completou o objetivo.");
             }
         }
-    }
-
-    private void moveEnemies() throws NullException, InvalidTypeException {
-        for (Enemy enemy :  mission.getAllEnemies()) {
-            Division currentDivision = mission.getDivision(enemy.getCurrentDivision().getName());
-            Division[] reachableDivisions = getReachableDivisions(currentDivision.getName(), 2, enemy);
-            if (reachableDivisions != null && reachableDivisions.length > 0) {
-                String newDivisionString = getRandomDivision(reachableDivisions, enemy);
-                for (int i = 0; i < reachableDivisions.length; i++) {
-                    if (reachableDivisions[i].getName().equals(newDivisionString)) {
-                        if (mission.getDivision(currentDivision.getName()).removeEnemy(enemy)) {
-                            enemy.setCurrentDivision(reachableDivisions[i]);
-                            mission.getDivision(reachableDivisions[i].getName()).addEnemy(enemy);
-                            if (reachableDivisions[i].equals(currentDiv)) {
-                                System.out.println("Um inimigo entrou na divisão! ");
-                                enemiesAttack(enemy);
-                                System.out.println("Pontos de Vida: " + lifePoints);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    public Division[] getReachableDivisions(String initialDivisionName, int maxDepth, Enemy enemy) {
-        Division[] reachableDivisions = new Division[20];
-        int count = 1;
-
-        Division initialDivision = mission.getDivision(enemy.getDivision().getName());
-        Queue<Division> queue = new Queue<Division>();
-        Queue<Integer> depths = new Queue<Integer>();
-        reachableDivisions[0] = initialDivision;
-        queue.enqueue(initialDivision);
-        depths.enqueue(0);
-
-        while (!queue.isEmpty()) {
-            Division current = queue.dequeue();
-            int depth = depths.dequeue();
-
-            if (!current.equals(initialDivision) && count < reachableDivisions.length) {
-                reachableDivisions[count++] = current;
-            }
-
-            if (depth < maxDepth) {
-                ArrayUnorderedList<String> edges = current.getEdges();
-                for (String edge : edges) {
-                    Division neighbor = mission.getDivision(edge);
-                    queue.enqueue(neighbor);
-                    depths.enqueue(depth + 1);
-                }
-            }
-        }
-
-        return Arrays.copyOf(reachableDivisions, count);
-    }
-
-    public String getRandomDivision(Division[] reachableDivisions, Enemy enemy) {
-        ArrayUnorderedList<String> currentDivisionEdges = enemy.getCurrentDivision().getEdges();
-        ArrayUnorderedList<String> validDivisions = new ArrayUnorderedList<>();
-        Iterator<String> iterator;
-        int count = 0;
-        for (String edge : currentDivisionEdges) {
-            for (int i = 0; i < reachableDivisions.length; i++) {
-                if (reachableDivisions[i].getName().equals(edge)) {
-                    validDivisions.addToRear(edge);
-                }
-            }
-        }
-
-        int randomIndex = (int) (Math.random() * validDivisions.size());
-        iterator = validDivisions.iterator();
-        String next = null;
-        while (iterator.hasNext() && count <= randomIndex) {
-            next = iterator.next();
-            count++;
-        }
-        return next;
     }
 
     private void showRealTimeInfo() {
