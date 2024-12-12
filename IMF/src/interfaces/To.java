@@ -7,12 +7,15 @@ public interface To {
 
     Double getLifePoints();
     void setLifePoints(Double lifePoints);
+    void reduceLifePoints(Double lifePoints);
+    void addLifePoints(Double lifePoints);
 
     Division getDivision();
     void setDivision(Division division);
 
     Item getItem();
-    void addItem(Item item);
+    boolean addMedicakKit();
+    public boolean addVest();
 
 
 
