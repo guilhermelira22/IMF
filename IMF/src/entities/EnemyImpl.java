@@ -8,9 +8,6 @@ package entities;
 import interfaces.Division;
 import interfaces.Enemy;
 
-import java.util.Arrays;
-import java.util.Iterator;
-
 /**
  * Estrutura de Dados - 2020-2021.
  *
