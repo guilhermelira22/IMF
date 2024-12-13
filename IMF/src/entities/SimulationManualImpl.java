@@ -182,7 +182,8 @@ public class SimulationManualImpl implements Comparable, SimulationManual {
         s += "\n\tAlvo: " + getTarget;
         s += "\n\tCaminho Percorrido: ";
         for (int i = 0; i < path2.size(); i++) {
-            s += path2.dequeue();
+            Division division = path2.dequeue();
+            s += division.getName();
             if (i != path2.size() - 1) {
                 s += ", ";
             }

@@ -62,7 +62,7 @@ public class MissionImpl implements Mission {
     /**
      * Array Ordenado onde estão inseridas todas as simulações manuais testadas
      */
-    private ArrayOrderedList<SimulationManual> simulation;
+    private ArrayOrderedList<SimulationManualImpl> simulation;
 
     /**
      * Construtor vazio que cria uma Mission para o Tó Cruz.
@@ -128,7 +128,7 @@ public class MissionImpl implements Mission {
         this.target = target;
         this.exitEntry = exitEntry;
         this.building = building;
-        this.simulation = new ArrayOrderedList<SimulationManual>();
+        this.simulation = new ArrayOrderedList<SimulationManualImpl>();
     }
 
     /**
@@ -227,7 +227,7 @@ public class MissionImpl implements Mission {
      * @return a lista ordenada que contém todas as simulações manuais
      * efetuadas.
      */
-    public ArrayOrderedList<SimulationManual> getSimulation() {
+    public ArrayOrderedList<SimulationManualImpl> getSimulation() {
         return simulation;
     }
 
@@ -238,7 +238,7 @@ public class MissionImpl implements Mission {
      * @param simulation simulação manual a adicionar.
      * @throws NullException caso a simulação que se deseja adicionar for nula.
      */
-    public void addSimulation(SimulationManual simulation) throws NullException {
+    public void addSimulation(SimulationManualImpl simulation) throws NullException {
         if (simulation == null) {
             throw new NullException("");
         }
@@ -386,56 +386,54 @@ public class MissionImpl implements Mission {
      */
     @Override
     public String toString() {
-        String s = "*-*-*-*-*-*-*--*-*-*-*--*-*-*-*--*-*-*--*-*-*--*-*-*-*--*-*-*-*-*-*-*\n";
-        s += "  Missão: \n";
-        s += "\tCodigo-Missão:" + this.getCod() + "\n";
-        s += "\tVersão:" + this.getVersion() + "\n";
-        s += "\tAlvo:\n";
-        s += "\t\tDivisão:" + this.getTarget().getDivision() + "\n";
-        s += "\t\tTipo:" + this.getTarget().getType() + "\n";
-        Integer tam = this.getBuilding().size();
+        StringBuilder s = new StringBuilder("*-*-*-*-*-*-*--*-*-*-*--*-*-*-*--*-*-*--*-*-*--*-*-*-*--*-*-*-*-*-*-*\n");
+        s.append("  Missão: \n");
+        s.append("\tCodigo-Missão: ").append(this.getCod()).append("\n");
+        s.append("\tVersão: ").append(this.getVersion()).append("\n");
+        s.append("\tAlvo:\n");
+        s.append("\t\tDivisão: ").append(this.getTarget().getDivision()).append("\n");
+        s.append("\t\tTipo: ").append(this.getTarget().getType()).append("\n");
+
+        int tam = this.getBuilding().size();
         if (this.getBuilding().isEmpty()) {
-            s += "EmptyCollectionException.GRAFO";
-            return s;
+            s.append("\nGrafo vazio.\n");
+            return s.toString();
         }
 
-        s += "\nValor\t\t\tIndex\t";
-
+        s.append("\nValor\t\t\t\tIndex\t\t");
         for (int i = 0; i < tam; i++) {
             if (i < 10) {
-                s += "   |" + i + "|   ";
+                s.append("   |" + i + "|   ");
             } else {
-                s += "  |" + i + "|   ";
+                s.append("  |" + i + "|   ");
             }
         }
-        s += "\n\n";
+        s.append("\n\n");
 
-        Iterator itBuilding = this.getBuilding().iteratorBFS(this.getBuilding().getFirst());
+        Iterator<Division> itBuilding = this.getBuilding().iteratorBFS(this.getBuilding().getFirst());
 
         int k = 0;
-        /*while (itBuilding.hasNext()) {
-            Division currentDiv = (Division) itBuilding.next();
-            s += String.format("%-20s     %-7s", currentDiv.getName(), k);
+        boolean[][] matrix = this.getBuilding().getEdge();
+
+        while (itBuilding.hasNext()) {
+            Division currentDiv = itBuilding.next();
+            s.append(String.format("%-20s     %-7s", currentDiv.getName(), k));
             for (int j = 0; j < tam; j++) {
-                String resultado = "";
-                if (this.building.getEdge()[k][j] < Double.POSITIVE_INFINITY) {
-                    if (this.building.getEdge()[k][j] == 0) {
-                        resultado = String.format(" | %.2f| ", this.building.getEdge()[k][j]);
-                    } else {
-                        resultado = String.format(" |%.2f| ", this.building.getEdge()[k][j]);
-                    }
+                String resultado;
+                if (matrix[k][j]) {
+                    resultado = " | YES | ";
                 } else {
-                    resultado += " | INF | ";
+                    resultado = " |  NO | ";
                 }
-
-                s += String.format("%2s", resultado);
+                s.append(String.format("%2s", resultado));
             }
-            s += "\n";
+            s.append("\n");
             k++;
-        }*/
+        }
 
-        return s;
+        return s.toString();
     }
+
 
     public void enemiesAttack(Enemy enemy, double lifePoints) {
         lifePoints -= enemy.getPower();
@@ -446,16 +444,18 @@ public class MissionImpl implements Mission {
         for (Enemy enemy :  enemies) {
             Division currentDivision = getDivision(enemy.getCurrentDivision().getName());
             Division[] reachableDivisions = getReachableDivisions(currentDivision.getName(), 2, enemy);
-            if (reachableDivisions != null && reachableDivisions.length > 0) {
-                String newDivisionString = getRandomDivision(reachableDivisions, enemy);
-                for (int i = 0; i < reachableDivisions.length; i++) {
-                    if (reachableDivisions[i].getName().equals(newDivisionString)) {
-                        if (getDivision(currentDivision.getName()).removeEnemy(enemy)) {
-                            enemy.setCurrentDivision(reachableDivisions[i]);
-                            getDivision(reachableDivisions[i].getName()).addEnemy(enemy);
-                            if (reachableDivisions[i].equals(currentDivTo)) {
-                                enemiesEncountered.addToRear(enemy);
-                                enemiesAttack(enemy, lifePoints);
+            if (currentDivision != currentDivTo) {
+                if (reachableDivisions != null && reachableDivisions.length > 0) {
+                    String newDivisionString = getRandomDivision(reachableDivisions, enemy);
+                    for (int i = 0; i < reachableDivisions.length; i++) {
+                        if (reachableDivisions[i].getName().equals(newDivisionString)) {
+                            if (getDivision(currentDivision.getName()).removeEnemy(enemy)) {
+                                enemy.setCurrentDivision(reachableDivisions[i]);
+                                getDivision(reachableDivisions[i].getName()).addEnemy(enemy);
+                                if (reachableDivisions[i].equals(currentDivTo)) {
+                                    enemiesEncountered.addToRear(enemy);
+                                    enemiesAttack(enemy, lifePoints);
+                                }
                             }
                         }
                     }

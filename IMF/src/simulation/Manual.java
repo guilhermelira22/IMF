@@ -11,10 +11,12 @@ import interfaces.Division;
 import interfaces.Enemy;
 import interfaces.Item;
 import interfaces.Mission;
+import json.Exporter;
 import orderedUnorderedList.ArrayUnorderedList;
 import stack.LinkedStack;
 import interfaces.To;
 
+import java.io.File;
 import java.util.*;
 
 public class Manual {
@@ -37,13 +39,14 @@ public class Manual {
         this.toCruz = new ToImpl(40.0);
     }
 
-    public void start() throws InvalidFileException, NullException, InvalidTypeException {
+    public void start(String file) throws InvalidFileException, NullException, InvalidTypeException {
 
         chooseStartDivision();
 
         playGame();
 
         SimulationManualImpl newSimulation = new SimulationManualImpl(toCruz.getLifePoints(), path, flagTarget);
+        Exporter.exportToJson(mission.getSimulation(), file);
         try {
             mission.addSimulation(newSimulation);
         } catch (NullException ex) {
@@ -231,11 +234,6 @@ public class Manual {
         return false;
     }
 
-    public void enemiesAttack(Enemy enemy) {
-        toCruz.reduceLifePoints(enemy.getPower());
-        System.out.println("Inimigo " + enemy.getName() + " atacou! Dano: " + enemy.getPower());
-    }
-
     private void useMedicalKit() throws NullException, InvalidTypeException {
         Item medicalKit = toCruz.getItem();
         if (medicalKit==null) {
@@ -282,20 +280,20 @@ public class Manual {
     private void showRealTimeInfo() {
         System.out.println("Inimigos:");
         for (Enemy enemy : mission.getAllEnemies()) {
-            System.out.println("Inimigo em " + enemy.getCurrentDivision());
+            System.out.println("Inimigo [nome: " + enemy.getName() + ", poder: " + enemy.getPower() + "], em " + enemy.getCurrentDivision().getName());
         }
 
         System.out.println("Kits médicos:");
         for (Item kit : mission.getAllItems()) {
             if (kit.getItemType() == Item_Type.KIT) {
-                System.out.println("Kit médico em " + kit.getDivision());
+                System.out.println("Kit médico em " + kit.getDivision().getName() + ", cura: " + kit.getAmount());
             }
         }
 
         System.out.println("Coletes:");
         for (Item vest : mission.getAllItems()) {
             if (vest.getItemType() == Item_Type.VEST) {
-                System.out.println("Colete em " + vest.getDivision());
+                System.out.println("Colete em " + vest.getDivision().getName() + ", protege: " + vest.getAmount());
             }
         }
 
