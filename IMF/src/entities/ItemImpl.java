@@ -5,7 +5,6 @@
 
 package entities;
 
-import com.google.gson.annotations.SerializedName;
 import enums.Item_Type;
 import interfaces.Division;
 import interfaces.Item;

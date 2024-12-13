@@ -5,6 +5,9 @@
 
 package enums;
 
+/**
+ * Enum representing the types of actions.
+ */
 public enum Action_Type {
     MOVEMENT,
     ATTACK,

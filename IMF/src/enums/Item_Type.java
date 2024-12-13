@@ -5,6 +5,9 @@
 
 package enums;
 
+/**
+ * Enum representing the types of items.
+ */
 public enum Item_Type {
     KIT,
     VEST

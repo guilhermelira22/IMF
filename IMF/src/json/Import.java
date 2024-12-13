@@ -20,6 +20,10 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 
+/**
+ * The Import class is responsible for reading and parsing JSON files
+ * related to game maps.
+ */
 public class Import {
     private final String file;
     private final String path = "maps/";
@@ -31,6 +35,12 @@ public class Import {
     }
 
 
+    /**
+     * Reads the JSON file specified by the 'file' attribute and parses its content into a JsonObject.
+     *
+     * @return JsonObject representing the contents of the JSON file.
+     * @throws FileNotFoundException if the file is null or cannot be found.
+     */
     private JsonObject readFile() throws FileNotFoundException {
         if(file == null) {
             throw new FileNotFoundException("File is null");
@@ -45,6 +55,12 @@ public class Import {
         }
     }
 
+    /**
+     * Parses the JSON file read previously and extracts the information about the divisions
+     * present in the building, returning an array of DivisionImpl objects.
+     *
+     * @return an array of DivisionImpl objects representing the divisions in the building.
+     */
     public DivisionImpl[] importDivisions(){
 
         JsonArray divisionsArray = map.getAsJsonArray("edificio");
@@ -57,6 +73,14 @@ public class Import {
         return building;
     }
 
+    /**
+     * Parses the JSON file read previously and extracts the information about the mission
+     * present in the file, returning a MissionImpl object.
+     *
+     * @param building an array of DivisionImpl objects representing the divisions in the building.
+     * @return a MissionImpl object representing the mission.
+     * @throws InvalidFileException if the mission in the file is invalid.
+     */
     public MissionImpl importMission(DivisionImpl[] building) throws InvalidFileException {
         try {
             String mission_name = map.get("cod-missao").getAsString();
@@ -85,6 +109,16 @@ public class Import {
     }
 
 
+    /**
+     * Parses the JSON file read previously and extracts information about the enemies present
+     * in the building. Each enemy is associated with a specific division.
+     *
+     * @param building an array of DivisionImpl objects representing the divisions in the building.
+     * @return an array of Enemy objects representing the enemies in the building.
+     * @throws InvalidFileException if any enemy is invalid.
+     * @throws NullException if any enemy is null.
+     * @throws InvalidTypeException if an enemy already exists in the division.
+     */
     public Enemy[] importEnemies(DivisionImpl[] building) throws InvalidFileException, NullException, InvalidTypeException {
         JsonArray enemiesArray = map.getAsJsonArray("inimigos");
         EnemyImpl[] enemies = new EnemyImpl[enemiesArray.size()];
@@ -109,6 +143,14 @@ public class Import {
         return enemies;
     }
 
+    /**
+     * Parses the JSON file read previously and extracts information about the items present
+     * in the building. Each item is associated with a specific division.
+     *
+     * @param building an array of DivisionImpl objects representing the divisions in the building.
+     * @return an array of ItemImpl objects representing the items in the building.
+     * @throws InvalidFileException if any item is invalid.
+     */
     public ItemImpl[] importItems(DivisionImpl[] building) throws InvalidFileException{
         JsonArray itemsArray = map.getAsJsonArray("itens");
 
@@ -153,6 +195,16 @@ public class Import {
     }
 
 
+    /**
+     * Parses the JSON file read previously and extracts information about the
+     * entries and exits of the building. Each entry/exit is associated with a
+     * specific division.
+     *
+     * @param building an array of Division objects representing the divisions
+     *                 in the building.
+     * @return an array of Division objects representing the entries and exits
+     *         of the building.
+     */
     public ArrayUnorderedList<Division> importEntryExits(Division[] building){
         JsonArray divisionsArray = map.getAsJsonArray("entradas-saidas");
         ArrayUnorderedList <Division> entriesExits= new ArrayUnorderedList<>();
@@ -172,6 +224,16 @@ public class Import {
     }
 
 
+    /**
+     * Parses the JSON file read previously and extracts information about the
+     * connections between divisions in the building. Each connection is an
+     * array of two strings representing the divisions that are connected.
+     *
+     * @return an array of pairs of strings representing the connections between
+     *         divisions in the building.
+     * @throws FileNotFoundException if the "ligacoes" entry doesn't exist in
+     *         the JSON file.
+     */
     public String[][] importEdges() throws FileNotFoundException {
         if(!map.has("ligacoes")) {
             throw new FileNotFoundException("Edges doesn't exist");

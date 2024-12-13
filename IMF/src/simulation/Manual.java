@@ -19,6 +19,9 @@ import orderedUnorderedList.ArrayUnorderedList;
 
 import java.util.*;
 
+/**
+ * This class represents a manual simulation of a mission.
+ */
 public class Manual {
 
     private static final int POWER = 40;
@@ -38,6 +41,14 @@ public class Manual {
         this.toCruz = new ToImpl(40.0);
     }
 
+    /**
+     * Starts a manual simulation of a mission.
+     *
+     * @throws InvalidFileException If the mission file is invalid.
+     * @throws NullException If the mission is null.
+     * @throws InvalidTypeException If the mission's target or exit/entry divisions
+     * are not of the correct type.
+     */
     public void start() throws InvalidFileException, NullException, InvalidTypeException {
 
         chooseStartDivision();
@@ -52,6 +63,13 @@ public class Manual {
         }
     }
 
+    /**
+     * Lets the user choose the start division of the mission.
+     *
+     * @throws NullException If the mission is null.
+     * @throws InvalidTypeException If the mission's target or exit/entry divisions
+     * are not of the correct type.
+     */
     private void chooseStartDivision() throws NullException, InvalidTypeException {
         System.out.println("Escolha uma divisão de entrada/saída:");
         Iterator<Division> it = mission.getExitEntry().iterator();
@@ -94,6 +112,13 @@ public class Manual {
         }
     }
 
+    /**
+     * Main game loop.
+     *
+     * @throws NullException If the mission is null.
+     * @throws InvalidTypeException If the mission's target or exit/entry divisions
+     * are not of the correct type.
+     */
     private void playGame() throws NullException, InvalidTypeException {
         Division target = mission.getTarget().getDivision();
 
@@ -108,6 +133,10 @@ public class Manual {
         System.out.println(getFinalPath());
     }
 
+
+    /**
+     * Shows the player the options available in the current division.
+     */
     private void showOptions() {
         System.out.println("Escolha a próxima divisão ou uma ação:\n");
         Iterator<String> it = toCruz.getDivision().getEdges().iterator();
@@ -121,6 +150,14 @@ public class Manual {
         }
     }
 
+    /**
+     * Waits for the user to choose an option, checks if it is valid and takes the
+     * appropriate actions.
+     *
+     * @throws NullException If the mission is null.
+     * @throws InvalidTypeException If the mission's target or exit/entry divisions
+     * are not of the correct type.
+     */
     private void chooseOption() throws NullException, InvalidTypeException {
         Scanner scan = new Scanner(System.in, "ISO-8859-1");
         boolean validChoice = false;
@@ -172,6 +209,13 @@ public class Manual {
         }
     }
 
+    /**
+     * Attack all enemies in the current division.
+     *
+     * @throws NullException If the mission is null.
+     * @throws InvalidTypeException If the mission's target or exit/entry divisions
+     * are not of the correct type.
+     */
     protected void attackAllEnemies() {
         Enemy[] enemies = toCruz.getDivision().getEnemies();
         int j = enemies.length;
@@ -190,10 +234,23 @@ public class Manual {
         setgetDeadEnemies();
     }
 
+    /**
+     * Sets the dead enemies in the mission to the ones in the current list.
+     */
     public void setgetDeadEnemies() {
         mission.setDeadEnemies(deadEnemies);
     }
 
+    /**
+     * Handles the encounter with enemies in the current division. This method
+     * provides the player with options to attack enemies or use a medical kit.
+     * The player's life points are reduced based on the enemies' power, and the
+     * battle continues until either all enemies are defeated or the player runs
+     * out of life points. Enemies may also move during the encounter.
+     *
+     * @throws NullException If a required object is null.
+     * @throws InvalidTypeException If an object is of an invalid type.
+     */
     private void encounter() throws NullException, InvalidTypeException {
         Scanner scan = new Scanner(System.in, "ISO-8859-1");
 
@@ -228,6 +285,11 @@ public class Manual {
         }
     }
 
+    /**
+     * Returns true if there are any enemies remaining in the current division.
+     *
+     * @return true if there are any enemies remaining, false otherwise.
+     */
     private boolean enemiesRemaining() {
         Enemy[] enemies = toCruz.getDivision().getEnemies();
         for (int i = 0; i < enemies.length; i++) {
@@ -238,6 +300,13 @@ public class Manual {
         return false;
     }
 
+    /**
+     * Use a medical kit to recover life points.
+     *
+     * @throws NullException If the mission, player or enemies are null.
+     * @throws InvalidTypeException If the mission's target or exit/entry divisions
+     * are not of the correct type.
+     */
     private void useMedicalKit() throws NullException, InvalidTypeException {
         Item medicalKit = toCruz.getItem();
         if (medicalKit==null) {
@@ -257,6 +326,11 @@ public class Manual {
         }
     }
 
+    /**
+     * Verifica o status da missão.
+
+     * @param target o alvo da missão.
+     */
     private void checkMissionStatus(Division target) {
         if (toCruz.getLifePoints() <= 0) {
             System.out.println("Missão falhou! Tó Cruz perdeu toda a vida.");
@@ -267,6 +341,10 @@ public class Manual {
         }
     }
 
+    /**
+     * Checks if the mission has been completed and if the player has left the
+     * building.
+     */
     private void finishMission() {
         if (flagTarget && toCruz.getDivision().isEntryExit()) {
             System.out.println("Missão concluída com sucesso! Parabéns Tó Cruz!!");
@@ -281,6 +359,9 @@ public class Manual {
         }
     }
 
+    /**
+     * Displays real-time information about the current mission status.
+     */
     private void showRealTimeInfo() {
         System.out.println("Inimigos:");
         for (Enemy enemy : mission.getAllEnemies()) {
@@ -314,6 +395,13 @@ public class Manual {
         System.out.println("Melhor caminho para o kit médico mais próximo: " + bestPathForKit);
     }
 
+
+    /**
+     * Converts an iterator of divisions into a string representing the path.
+     *
+     * @param pathIterator an iterator of divisions.
+     * @return a string representing the path.
+     */
     private String iteratorToString(Iterator<Division> pathIterator) {
         StringBuilder path = new StringBuilder();
         while (pathIterator.hasNext()) {
@@ -325,6 +413,12 @@ public class Manual {
         return path.toString();
     }
 
+    /**
+     * Converts the path queue into a string representing the final path taken
+     * by the player during the mission.
+     *
+     * @return a string representing the final path.
+     */
     private String getFinalPath() {
         StringBuilder finalPath = new StringBuilder("Caminho percorrido:\n");
         Queue<Division> tempPath = new Queue<Division>();

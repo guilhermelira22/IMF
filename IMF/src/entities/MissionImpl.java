@@ -16,103 +16,34 @@ import orderedUnorderedList.ArrayUnorderedList;
 
 import java.util.Arrays;
 import java.util.Iterator;
-/**
- * Estrutura de Dados - 2020-2021.
- *
- * @author Mariana Ribeiro - 8190573
- * @author André Raro - 8190590
- *
- * Classe Mission representa uma missão do Tó Cruz. A missão contém um código
- * que a representa, uma versão, o alvo da missão, as saidas e entradas do
- * edifício,um grafo que representa o mapa do edifício e uma lista ordenada que
- * contem todas as simulações testadas para a missão.
- */
+
 public class MissionImpl implements Mission {
 
-    /**
-     * Código da missão do tipo String.
-     */
     private String cod;
-    /**
-     * Versão da missão do tipo Inteiro.
-     */
+
     private Integer version;
 
-    /**
-     * Instancia da classe Target que representa o alvo da missão.
-     */
     private Target target;
 
-    /**
-     * Array Desordenado que representa as entradas ou saidas do edifício.
-     */
     private ArrayUnorderedList<Division> exitEntry;
 
-    /**
-     * Grafo Pesado(Network ou Rede) que representa o edifício.
-     */
     private GraphMatrix<Division> building;
 
-    /**
-     * Array Ordenado onde estão inseridas todas as simulações manuais testadas
-     */
+
     private ArrayOrderedList<SimulationManualImpl> simulation;
 
     ArrayUnorderedList<Enemy> deadEnemies = new ArrayUnorderedList<Enemy>();
 
-    /**
-     * Construtor vazio que cria uma Mission para o Tó Cruz.
-     */
+
     public MissionImpl() {
     }
 
-    /**
-     * Construtor que cria uma Missão.Recebe como parâmetro o codigo da missão,
-     * a sua versão para poder testar varios cenarios, a divisao alvo ou seja a
-     * divisao onde se encontra o alvo, bem como o tipo do alvo que se trata,
-     * estes dois ultimos parâmetros sao recebidos individualdemente apesar de
-     * se tratar de apenas uma varivel de classe, esta faz referencia a classe
-     * {}.
-     *
-     * @param cod codigo da missão.
-     * @param version versão da missão.
-     * @param division divisão alvo.
-     * @param type tipo do alvo.
-     */
-
-    /**
-     * Construtor que cria uma Missão.Recebe como parâmetro o codigo da missão,
-     * a sua versão para poder testar varios cenarios e uma instancia da classe
-     * {} que possui a divisao alvo ou seja a divisao
-     * onde se encontra o alvo, bem como o tipo do alvo que se trata.
-     *
-     * @param cod codigo da missão.
-     * @param version versão da missão.
-     * @param target instancia da classe Target.
-     */
     public MissionImpl(String cod, Integer version, Target target) {
         this.cod = cod;
         this.version = version;
         this.target = target;
     }
 
-    /**
-     * Construtor que cria uma Missão.Recebe como parâmetro o codigo da missão,
-     * a sua versão para poder testar varios cenarios, uma instancia da classe
-     * {} que possui a divisao alvo ou seja a divisao
-     * onde se encontra o alvo, bem como o tipo do alvo que se trata,recebe
-     * tambem uma lista desordenada que representa as possiveis entradas e
-     * saidas do edificio por ultimo recebe um grafo pesado(network ou rede) com
-     * os vertices e as ligações ja tratadas, este representa o edifício.
-     *
-     * @param cod codigo da missão.
-     * @param version versão da missão.
-     * @param target instancia da classe Target.
-     * @param exitEntry lista desordenada que possui entradas e saidas do
-     * edifício
-     * @param building grafo pesado(network ou rede) que representa o edifício
-     *
-     */
     public MissionImpl(String cod, Integer version, Target target, ArrayUnorderedList<Division> exitEntry, GraphMatrix<Division> building) {
         this.cod = cod;
         this.version = version;
@@ -122,113 +53,46 @@ public class MissionImpl implements Mission {
         this.simulation = new ArrayOrderedList<>();
     }
 
-    /**
-     * Retorna um array desordenado que possui o nome das divisões que são
-     * simultanemaente entradas e saidas do grafo.
-     *
-     * @return um array ordenado que possui as entradas e saidas do grafo.
-     */
     public ArrayUnorderedList<Division> getExitEntry() {
         return this.exitEntry;
     }
 
-    /**
-     * Retorna o grafo pesado(network ou grafo) que possui as divisões e as
-     * ligações entre estas.
-     *
-     * @return o grafo pesado(network ou grafo) que possui as divisões e as
-     * ligações entre estas.
-     */
     public GraphMatrix<Division> getBuilding() {
         return building;
     }
 
-    /**
-     * Retorna uma string que representa codigo da missão.
-     *
-     * @return uma string que representa o codigo da missão.
-     */
     public String getCod() {
         return cod;
     }
 
-    /**
-     * Altera o codigo da missão.
-     *
-     * @param cod novo codigo da missão.
-     */
     public void setCod(String cod) {
         this.cod = cod;
     }
 
-    /**
-     * Retorna um inteiro que representa a versão da missão.
-     *
-     * @return um inteiro que representa a versão da missão.
-     */
     public Integer getVersion() {
         return version;
     }
 
-    /**
-     * Altera a versão da da missão.
-     *
-     * @param version nova versão da missão.
-     */
     public void setVersion(Integer version) {
         this.version = version;
     }
 
-    /**
-     * Retorna o alvo da missão instancia da classe {}.
-     *
-     * @return alvo da missão.
-     */
     public Target getTarget() {
         return target;
     }
 
-    /**
-     * Altera o alvo da missão, este deve ser da instancia da classe
-     * {}.
-     *
-     * @param target novo alvo da missão.
-     *
-     */
     public void setTarget(Target target) {
         this.target = target;
     }
 
-    /**
-     * Altera o alvo da missão. Recebe como parâmetro as variaveis da classe
-     * {}.
-     *
-     * @param divisionImpl divisão alvo.
-     * @param type tipo do alvo.
-     */
     public void setTarget(Division divisionImpl, String type) {
         this.target = new TargetImpl(divisionImpl, type);
     }
 
-    /**
-     * Retorna a lista ordenada que contém todas as simulações manuais
-     * efetuadas, a lista ordenadas possui instancias da classe
-     * {}.
-     *
-     * @return a lista ordenada que contém todas as simulações manuais
-     * efetuadas.
-     */
     public ArrayOrderedList<SimulationManualImpl> getSimulation() {
         return simulation;
     }
 
-    /**
-     * Adiciona a lista ordenada que contém as simulações manuais mais uma
-     * simulação manual.
-     *
-     * @param simulation simulação manual a adicionar.
-     * @throws NullException caso a simulação que se deseja adicionar for nula.
-     */
     public void addSimulation(SimulationManualImpl simulation) throws NullException {
         if (simulation == null) {
             throw new NullException("");
@@ -237,25 +101,10 @@ public class MissionImpl implements Mission {
         this.simulation.add(simulation);
     }
 
-    /**
-     * Verifica se a missão possui um formato valido. Para a missao ser valida o
-     * cod têm de ser diferente de nulo e não pode estar em branco.A versão deve
-     * ser diferente de nula e superior a 0. A instancia da classe
-     * {} tem de ser tambem valida
-     *
-     * @return verdadeiro se a missão for valida, falso caso contrario.
-     */
     public boolean isValid() {
         return (this.cod != null && !this.cod.isBlank() && this.version > 0 && this.version != null && this.target.isValid());
     }
 
-    /**
-     * Retorna a divisão alvo num formato da classe {}.
-     * É feita uma comparação entre strings visto que a divisão alvo apenas
-     * contem o nome da divisão guardado,
-     *
-     * @return a divisão alvo num formato da classe {}
-     */
     public DivisionImpl getTargetDivision() {
         Iterator<DivisionImpl> targetDivision = this.building.iteratorBFS(this.building.getFirst());
         DivisionImpl current = null;
@@ -270,20 +119,6 @@ public class MissionImpl implements Mission {
         return current;
     }
 
-    /**
-     * Verifica através do nome de uma divisão se essa divisão é uma divisão de
-     * saida ou entrada.Para tal uma pesquisa pelo array desordenado de entradas
-     * e saidas, e uma comparação de strings com o nome da Divisão presente no
-     * array desordenado de entradas e saidas e com a string recebida como
-     * parâmetro. Caso o nome da divisão (string recebida como parâmetro )
-     * esteja presente no array desordenado é retornado essa divisão caso
-     * contrario é retornado uma divisão nula.
-     *
-     * @param div string que representa o nome da divisão a procurar no array
-     * desordenado de entradas e saidas.
-     * @return caso encontre a divisão esta é retornada, se não é retornada uma
-     * divisão nula.
-     */
     public Division getDivisionExitEntry(String div) {
         Iterator<Division> divisionExitEntry = this.exitEntry.iterator();
         Division current = null;
@@ -298,19 +133,6 @@ public class MissionImpl implements Mission {
         return null;
     }
 
-    /**
-     * Procura no grafo pesado(network ou rede) uma divisão atraves de uma
-     * string, esta representa o nome da divisão.É feita uma comparação de
-     * strings entre o nome das divisões do grafo e a string recebida por
-     * parâmetro.Caso o nome da divisão (string recebida como parâmetro ) esteja
-     * presente grafo pesado(network ou rede) é retornado essa divisão caso
-     * contrario é retornado uma divisão nula.
-     *
-     * @param div string que representa o nome da divisão a procurar no array
-     * desordenado de entradas e saidas.
-     * @return caso encontre a divisão esta é retornada, se não é retornada uma
-     * divisão nula.
-     */
     public DivisionImpl getDivision(String div) {
         Iterator<DivisionImpl> division = this.building.iteratorBFS(this.building.getFirst());
         DivisionImpl current = null;
@@ -370,19 +192,24 @@ public class MissionImpl implements Mission {
         return allItems;
     }
 
+    /**
+     * Gets the list of all enemies that were killed.
+     *
+     * @return the list of all enemies that were killed.
+     */
     public ArrayUnorderedList<Enemy> getDeadEnemies() {
         return deadEnemies;
     }
 
+    /**
+     * Sets the list of dead enemies for the mission.
+     *
+     * @param deadEnemies the new list of enemies that have been killed in the mission.
+     */
     public void setDeadEnemies(ArrayUnorderedList<Enemy> deadEnemies) {
         this.deadEnemies = deadEnemies;
     }
 
-    /**
-     * Retorna uma representação em String da Missão
-     *
-     * @return string representação da Missão
-     */
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder("*-*-*-*-*-*-*--*-*-*-*--*-*-*-*--*-*-*--*-*-*--*-*-*-*--*-*-*-*-*-*-*\n");
@@ -434,10 +261,33 @@ public class MissionImpl implements Mission {
     }
 
 
+    /**
+     * Enemies attack the player. The player's life points are decreased by the
+     * power of the enemy.
+     *
+     * @param enemy the enemy that is attacking the player.
+     * @param lifePoints the current life points of the player.
+     */
     public void enemiesAttack(Enemy enemy, double lifePoints) {
         lifePoints -= enemy.getPower();
     }
 
+    /**
+     * Moves enemies to new divisions if possible, and makes them attack the player if they
+     * encounter them in the target division. Enemies are moved randomly within 2
+     * divisions from their initial position, and any enemy moved to the target division
+     * attacks the player, reducing the player's life points.
+     *
+     * @param enemies the list of enemies to be moved.
+     * @param currentDivTo the current division the player is in.
+     * @param lifePoints the current life points of the player, which will be decreased
+     *                   if an enemy attacks.
+     * @param isManuel a flag indicating if the simulation is manual, to print enemy encounter
+     *                 messages.
+     * @return a list of enemies that have moved to the target division.
+     * @throws NullException if any operation involving a null object occurs.
+     * @throws InvalidTypeException if an invalid operation is performed on the types involved.
+     */
     public ArrayUnorderedList<Enemy> moveEnemies(ArrayUnorderedList<Enemy> enemies, Division currentDivTo, double lifePoints, boolean isManuel) throws NullException, InvalidTypeException {
         ArrayUnorderedList<Enemy> enemiesEncountered = new ArrayUnorderedList<>();
         for (Enemy enemy :  enemies) {
@@ -470,6 +320,17 @@ public class MissionImpl implements Mission {
         return enemiesEncountered;
     }
 
+    /**
+     * Finds all reachable divisions from the given initial division, up to the
+     * given maximum depth, that the given enemy can reach.
+     *
+     * @param initialDivisionName the name of the initial division.
+     * @param maxDepth the maximum depth to search for reachable divisions.
+     * @param enemy the enemy whose reachable divisions are to be found.
+     * @return an array of all reachable divisions that the enemy can reach,
+     *         starting from the given initial division, up to the given
+     *         maximum depth. The array does not include the initial division.
+     */
     public Division[] getReachableDivisions(String initialDivisionName, int maxDepth, Enemy enemy) {
         Division[] reachableDivisions = new Division[20];
         int count = 1;
@@ -502,6 +363,15 @@ public class MissionImpl implements Mission {
         return Arrays.copyOf(reachableDivisions, count);
     }
 
+    /**
+     * Gets a random division that the given enemy can reach, from the given
+     * list of reachable divisions.
+     *
+     * @param reachableDivisions the list of reachable divisions.
+     * @param enemy the enemy whose reachable divisions are to be used.
+     * @return a random division that the enemy can reach, chosen from the given
+     *         list of reachable divisions.
+     */
     public String getRandomDivision(Division[] reachableDivisions, Enemy enemy) {
         ArrayUnorderedList<String> currentDivisionEdges = enemy.getCurrentDivision().getEdges();
         ArrayUnorderedList<String> validDivisions = new ArrayUnorderedList<>();

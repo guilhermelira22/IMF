@@ -13,10 +13,20 @@ import orderedUnorderedList.ArrayOrderedList;
 import java.io.*;
 import java.util.Iterator;
 
+/**
+ * The Exporter class is responsible for exporting simulation data to a JSON file.
+ */
 public class Exporter {
     private static final String path = "simulations/";
     private static String EXTENSION = ".json";
 
+    /**
+     * Exports the given object to a JSON file with the specified file name.
+     *
+     * @param obj the object to be serialized and exported to a JSON file
+     * @param fileName the name of the file (without extension) where the JSON
+     *                 representation of the object will be saved
+     */
     private static void exporter(Object obj, String fileName) {
         FileWriter fileopen = null;
         try {
@@ -29,6 +39,13 @@ public class Exporter {
         }
     }
 
+    /**
+     * Exports a list of manual simulations to a JSON file.
+     *
+     * @param manual   the list of SimulationManualImpl objects to be exported
+     * @param fileName the name of the file (without extension) where the JSON
+     *                 representation of the simulations will be saved
+     */
     public static void exportToJson(ArrayOrderedList<SimulationManualImpl> manual, String fileName) {
 
         Iterator it = manual.iterator();

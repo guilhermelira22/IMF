@@ -65,6 +65,10 @@ public class ToImpl implements To {
         return this.backpack.peek();
     }
 
+    /**
+     * Removes the item from the top of the backpack and adds its value to To
+     * Cruz's life points.
+     */
     public void useItem() {
         if(!this.backpack.isEmpty()) {
             addLifePoints(backpack.pop().getAmount());
@@ -95,6 +99,13 @@ public class ToImpl implements To {
         return false;
     }
 
+    /**
+     * Finds the shortest path from the current division to the closest division containing a medical kit.
+     *
+     * @param mission the mission object containing the building graph and items
+     * @return an iterator over the divisions representing the shortest path to the closest medical kit,
+     *         or null if no path is found
+     */
     public Iterator<Division> getBestPathToClosestKit(Mission mission) {
         GraphMatrix<Division> graph = mission.getBuilding();
 
@@ -117,6 +128,13 @@ public class ToImpl implements To {
         return pathIterator;
     }
 
+    /**
+     * Finds the shortest path from the current division to the closest exit.
+     *
+     * @param mission the mission object containing the building graph and items
+     * @return an iterator over the divisions representing the shortest path to the closest exit,
+     *         or null if no path is found
+     */
     public Iterator<Division> getBestPathToClosestExit(Mission mission) {
         GraphMatrix<Division> graph = mission.getBuilding();
 
@@ -138,6 +156,12 @@ public class ToImpl implements To {
         return pathIterator;
     }
 
+/**
+ * Calculates the number of divisions in a given path.
+ *
+ * @param pathIterator an iterator over the divisions representing the path
+ * @return the length of the path as an integer, representing the number of divisions
+ */
     public int calculatePathLength(Iterator<Division> pathIterator) {
         int length = 0;
         Division previous = null;

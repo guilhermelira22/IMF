@@ -24,6 +24,9 @@ import java.io.FileNotFoundException;
 import java.util.Iterator;
 import java.util.Scanner;
 
+/**
+ * Main menu of the game.
+ */
 public class Menu {
 
     private String file;
@@ -35,6 +38,9 @@ public class Menu {
         mainMenu();
     }
 
+    /**
+     * Displays a list of available missions and asks the user to select one.
+     */
     public void selectMission() {
         Scanner scanner = new Scanner(System.in, "ISO-8859-1");
         boolean isMissionValid = false;
@@ -86,6 +92,12 @@ public class Menu {
         } while (!isMissionValid);
     }
 
+    /**
+     * Displays the main menu of the IMF simulator and handles user interactions.
+     *
+     * @throws NullException if a required object is null during operation.
+     * @throws InvalidTypeException if an invalid type is encountered during operation.
+     */
     public void mainMenu() throws NullException, InvalidTypeException {
         Scanner scanner = new Scanner(System.in, "ISO-8859-1");
         boolean exit = false;
@@ -140,6 +152,13 @@ public class Menu {
         }
     }
 
+    /**
+     * Executes a manual simulation for the given mission file.
+     *
+     * @param file the name of the mission file to simulate
+     * @throws NullException if a required object is null during operation
+     * @throws InvalidTypeException if an invalid type is encountered during operation
+     */
     private void simManual(String file) throws NullException, InvalidTypeException {
         resetMap();
         Manual m = new Manual(mission);
@@ -150,6 +169,12 @@ public class Menu {
         }
     }
 
+    /**
+     * Executes an automatic simulation for the given mission file.
+     *
+     * @throws NullException if a required object is null during operation
+     * @throws InvalidTypeException if an invalid type is encountered during operation
+     */
     private void simAuto() throws NullException, InvalidTypeException {
         resetMap();
         Double MaxLifePoints = 0.0;
@@ -173,8 +198,14 @@ public class Menu {
 
     }
 
+    /**
+     * Prints the results of the manual simulations that have been run for the
+     * current mission.
+     *
+     * If simulations have been run, prints all of the simulations in the order
+     * they were run.
+     */
     private void simResult() {
-
         ArrayOrderedList<SimulationManualImpl> simulation = mission.getSimulation();
         Iterator<SimulationManualImpl> it = simulation.iterator();
         System.out.println("\nSimulações: ");
@@ -188,6 +219,12 @@ public class Menu {
         System.out.println("\n");
     }
 
+    /**
+     * Resets the state of the map after a simulation has been run.
+     *
+     * @throws NullException if a required object is null during operation
+     * @throws InvalidTypeException if an invalid type is encountered during operation
+     */
     private void resetMap() throws NullException, InvalidTypeException {
         for (Division d : mission.getDivisions()) {
             for (Enemy e : d.getEnemies()) {
@@ -210,6 +247,11 @@ public class Menu {
         }
     }
 
+    /**
+     * Pause the program until the user presses Enter.
+     *
+     * @param scanner a scanner to read the user input
+     */
     private void pause(Scanner scanner) {
         System.out.println("\nPressione Enter para continuar...");
         scanner.nextLine();

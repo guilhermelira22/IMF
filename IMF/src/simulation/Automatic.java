@@ -18,6 +18,9 @@ import orderedUnorderedList.ArrayUnorderedList;
 
 import java.util.Iterator;
 
+/**
+ * Automatic simulation of a mission.
+ */
 public class Automatic {
 
     private static final Double POWER = 30.0;
@@ -46,10 +49,21 @@ public class Automatic {
         this.toCruz = new ToImpl(POWER);
     }
 
+    /**
+     * Returns the life points of Tó Cruz after the simulation.
+     *
+     * @return Tó Cruz's life points as a Double.
+     */
     public Double getLifePoints(){
         return this.toCruz.getLifePoints();
     }
 
+    /**
+     * Starts the automatic simulation.
+     *
+     * @throws NullException if the mission or the start division are null.
+     * @throws InvalidTypeException if the start division is not a valid division.
+     */
     public void start() throws NullException, InvalidTypeException {
         toCruz.setDivision(startDiv);
         Iterator<Division> pathToTarget = mission.getBuilding().iteratorShortestPath(toCruz.getDivision(), mission.getTarget().getDivision());
@@ -137,6 +151,13 @@ public class Automatic {
         setPath(completePath);
     }
 
+    /**
+     * Checks if the given division is a room where Tó Cruz is being attacked.
+     *
+     * @param division the division to be checked
+     * @return true if the division is a room where Tó Cruz is being attacked,
+     * false otherwise
+     */
     private boolean checkRoom(Division division){
         for(Enemy enemy: mission.getAllEnemies()){
             Division[] reachableDiv = mission.getReachableDivisions(enemy.getCurrentDivision().getName(), 2, enemy);
@@ -156,6 +177,12 @@ public class Automatic {
         return true;
     }
 
+    /**
+     * Makes Tó Cruz go to the closest kit.
+     *
+     * @param path the current path of Tó Cruz
+     * @param pathToKit the path to the closest kit
+     */
     private void goToKit(PriorityQueue<Action> path,Iterator<Division> pathToKit){
         int i=0;
         PriorityQueue<Action> newPath = new PriorityQueue<>();
@@ -184,6 +211,11 @@ public class Automatic {
 
     }
 
+    /**
+     * Makes Tó Cruz go to the exit of the building.
+     *
+     * @param pathToExit the path to the exit of the building
+     */
     private void goExit(Iterator<Division> pathToExit){
         int i=0;
         while(pathToExit.hasNext()){
@@ -196,6 +228,9 @@ public class Automatic {
         }
     }
 
+    /**
+     * Attacks all enemies in the current division of Tó Cruz.
+     */
     private void attackAllEnemies() {
         Enemy[] enemies = toCruz.getDivision().getEnemies();
         int j = enemies.length;
@@ -211,10 +246,18 @@ public class Automatic {
         setgetDeadEnemies();
     }
 
+    /**
+     * Sets the dead enemies in the mission with the enemies in the current list.
+     */
     private void setgetDeadEnemies() {
         mission.setDeadEnemies(deadEnemies);
     }
 
+    /**
+     * Sets the complete path string for the simulation.
+     *
+     * @param path Queue of Division representing the path taken in the simulation
+     */
     private void setPath(Queue<Division> path) {
         this.completePathString = new String[completePath.size()];
         int i = 0;
@@ -224,6 +267,7 @@ public class Automatic {
             i++;
         }
     }
+
 
     public String toString() {
         String s = "";

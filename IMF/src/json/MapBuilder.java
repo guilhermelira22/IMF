@@ -22,6 +22,10 @@ import orderedUnorderedList.ArrayUnorderedList;
 
 import java.io.*;
 
+/**
+ * Class that reads a json file and creates a mission with the
+ * specifications read from the file.
+ */
 public class MapBuilder extends Import{
     private String file;
     private final static String pathExport = "simulations/";
@@ -45,6 +49,14 @@ public class MapBuilder extends Import{
         createBuilding();
     }
 
+    /**
+     * Reads a json file and creates a mission with the
+     * specifications read from the file. If any of the
+     * specifications are invalid, throws an InvalidFileException.
+     *
+     * @return MissionImpl object representing the mission
+     * @throws InvalidFileException if any of the specifications are invalid
+     */
     public MissionImpl createMission() throws InvalidFileException {
         MissionImpl missonJson = importMission(this.divisionImpls);
 
@@ -64,6 +76,15 @@ public class MapBuilder extends Import{
         return readJsonLeaderboard(mission);
     }
 
+    /**
+     * Reads a json file representing a leaderboard of a mission and
+     * returns the MissionImpl object with the leaderboard added.
+     * If any of the specifications are invalid, throws an InvalidFileException.
+     *
+     * @param mission the mission to add the leaderboard to
+     * @return MissionImpl object representing the mission with the leaderboard
+     * @throws InvalidFileException if any of the specifications are invalid
+     */
     public MissionImpl readJsonLeaderboard(MissionImpl mission) throws InvalidFileException {
         String path = pathExport + this.file + EXTENSION;
         File f = new File(path);
@@ -89,6 +110,11 @@ public class MapBuilder extends Import{
 
     }
 
+    /**
+     * Creates a graph matrix representing the building's map.
+     * The graph matrix is built by adding each division as a vertex
+     * and establishing connections between them.
+     */
     private void createBuilding(){
         for(int i = 0; i< divisionImpls.length; i++){
             building.addVertex(divisionImpls[i]);
@@ -96,6 +122,11 @@ public class MapBuilder extends Import{
         stablishConnections();
     }
 
+
+/**
+ * Establishes connections between divisions in the building by adding edges
+ * to the graph matrix.
+ */
     private void stablishConnections() {
         for (String[] edge : edges) {
             String fromName = edge[0];
@@ -126,6 +157,12 @@ public class MapBuilder extends Import{
     }
 
 
+    /**
+     * Checks if the target division is valid.
+     *
+     * @param m the mission to check
+     * @return true if the target division is valid, false otherwise
+     */
     public boolean isTargetDivisionValid(MissionImpl m) {
         for (int i = 0; i < divisionImpls.length; i++) {
             if (m.getTarget().getDivision().getName().equals(divisionImpls[i].getName())) {
@@ -135,6 +172,11 @@ public class MapBuilder extends Import{
         return false;
     }
 
+    /**
+     * Checks if all entries-exits divisions are valid.
+     *
+     * @return true if all divisions are valid, false otherwise
+     */
     public boolean isEntriesExitsDivisionValid() {
         int count = 0;
 
@@ -147,6 +189,11 @@ public class MapBuilder extends Import{
         return (count == entriesExits.size());
     }
 
+    /**
+     * Checks if all division edges are valid.
+     *
+     * @return true if all division edges are valid, false otherwise
+     */
     public boolean isDivisionEdgesValid(){
         for (int i = 0; i < edges.length; i++) {
             int find = 0;
@@ -162,6 +209,11 @@ public class MapBuilder extends Import{
         return true;
     }
 
+    /**
+     * Checks if all items have valid divisions.
+     *
+     * @return true if all items have valid divisions, false otherwise
+     */
     public boolean isItemsValid() {
         int count = 0;
         for(Item item: items) {
@@ -174,6 +226,11 @@ public class MapBuilder extends Import{
         return count == items.length;
     }
 
+    /**
+     * Checks if all enemies have valid divisions.
+     *
+     * @return true if all enemies have valid divisions, false otherwise
+     */
     public boolean isEnemiesValid() {
         int count = 0;
         for(Enemy enemy: enemies) {
