@@ -1,5 +1,6 @@
 package menu;
 
+import Queue.Queue;
 import entities.MissionImpl;
 import entities.SimulationManualImpl;
 import exceptions.InvalidFileException;
@@ -149,8 +150,25 @@ public class Menu {
 
     private void simAuto() throws NullException, InvalidTypeException, InvalidFileException, FileNotFoundException {
         resetMap();
-        Automatic a = new Automatic(mission, mission.getDivision("Garagem"));
-        a.start();
+        Double MaxLifePoints = 0.0;
+        String path = "";
+
+        for(Division div: mission.getExitEntry()){
+            Automatic a = new Automatic(mission, div);
+            a.start();
+            if(a.getLifePoints()> MaxLifePoints){
+                path = a.toString();
+                MaxLifePoints = a.getLifePoints();
+            }
+            resetMap();
+        }
+
+        if(MaxLifePoints>0) {
+            System.out.println(path);
+        }else{
+            System.out.println("Não foi possivel terminar a missão por qualquer entrada");
+        }
+
     }
 
     private void simResult() {

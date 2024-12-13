@@ -22,6 +22,8 @@ public class Automatic {
 
 
     private PriorityQueue<Action> path;
+    Queue<Division> completePath;
+    String[] completePathString;
     private MissionImpl mission;
     private boolean flagLeft;
     private boolean flagTarget;
@@ -37,13 +39,17 @@ public class Automatic {
         this.flagKit = false;
         this.startDiv = startDiv;
         this.path = new PriorityQueue<Action>();
+        this.completePath = new Queue<Division>();
+        this.completePathString = new String[100];
         this.toCruz = new ToImpl(POWER);
     }
 
+    public Double getLifePoints(){
+        return this.toCruz.getLifePoints();
+    }
 
     public void start() throws NullException, InvalidTypeException {
         toCruz.setDivision(startDiv);
-        Queue<Division> completePath = new Queue<Division>();
         Iterator<Division> pathToTarget = mission.getBuilding().iteratorShortestPath(toCruz.getDivision(), mission.getTarget().getDivision());
 
         while(pathToTarget.hasNext()){
@@ -57,12 +63,10 @@ public class Automatic {
         }
         while(!path.isEmpty() && toCruz.getLifePoints()>=0 && !flagLeft){
             Action action = path.getRoot().getElement();
-            System.out.println("Divisão: " + action.getDivision() + "\nAção: " + action.getType());
 
             switch(action.getType()){
                 case MOVEMENT:
                     if(!flagTarget && toCruz.getLifePoints() <= 50.0 && toCruz.getItem()!=null){
-                        System.out.println("Usou um KIT!");
                         toCruz.useItem();
                     }
                     if(toCruz.getDivision().sizeEnemies()==0){
@@ -80,17 +84,14 @@ public class Automatic {
                                 flagLeft = true;
                             }
                             if (toCruz.addMedicakKit()) {
-                                System.out.println("Pegou um kit médico!");
                                 this.flagKit = false;
                             } else if (toCruz.addVest()) {
-                                System.out.println("Vestiu um colete!");
                                 this.flagKit = false;
                             }
                         }
                         else {
                             if (toCruz.getItem() != null) {
                                 if (toCruz.getItem().getAmount() + toCruz.getLifePoints() <= 100) {
-                                    System.out.println("Usou um KIT!");
                                     toCruz.useItem();
                                 }
                             }
@@ -109,7 +110,6 @@ public class Automatic {
                         goToKit(path, pathToKit3);
                     }
                     mission.moveEnemies(mission.getAllEnemies(), toCruz.getDivision(), toCruz.getLifePoints(), false);
-                    System.out.println("HP: " + toCruz.getLifePoints());
                     break;
 
                 case ATTACK:
@@ -121,30 +121,18 @@ public class Automatic {
                     }
                     toCruz.reduceLifePoints(toCruz.getDivision().getEnemiesPower());
                     mission.moveEnemies(mission.getAllEnemies(), toCruz.getDivision(), toCruz.getLifePoints(), false);
-                    System.out.println("HP: " + toCruz.getLifePoints());
                     break;
 
                 case GET_TARGET:
                     Iterator<Division> pathToExit = toCruz.getBestPathToClosestExit(mission);
                     goExit(pathToExit);
-                    System.out.println("TARGET APANHADO");
                     flagTarget = true;
                     path.removeNext();
                     break;
             }
         }
-        if(flagLeft){
-            System.out.println("SAIU E GANHOU " + toCruz.getLifePoints());
-            while(!completePath.isEmpty()){
-                System.out.println(completePath.dequeue().getName() + " -> ");
-            }
-        }
-        if(toCruz.getLifePoints()<=0){
-            System.out.println("Morreu e Perdeu\nPATH:\n");
-            while(!completePath.isEmpty()){
-                System.out.println(completePath.dequeue().getName() + " -> ");
-            }
-        }
+
+        setPath(completePath);
     }
 
     public boolean checkRoom(Division division){
@@ -223,6 +211,30 @@ public class Automatic {
 
     public void setgetDeadEnemies() {
         mission.setDeadEnemies(deadEnemies);
+    }
+
+    public void setPath(Queue<Division> path) {
+        this.completePathString = new String[completePath.size()];
+        int i = 0;
+        while (!path.isEmpty()) {
+            Division div = path.dequeue();
+            this.completePathString[i] = div.getName();
+            i++;
+        }
+    }
+
+    public String toString() {
+        String s = "";
+        s += "\n\tCaminho Percorrido: ";
+        for (int i = 0; i < completePathString.length; i++) {
+            if(completePathString[i]!= null) {
+                s += completePathString[i];
+                if (i != completePathString.length - 1) {
+                    s += ", ";
+                }
+            }
+        }
+        return s;
     }
 
 }

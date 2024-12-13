@@ -175,13 +175,6 @@ public class Import {
         return entriesExits;
     }
 
-    protected void setEntryExits (DivisionImpl[] building, ArrayUnorderedList<DivisionImpl> exits){
-        for(int i=0;i<building.length;i++){
-            if(exits.contains(building[i])){
-                building[i].setEntryExit();
-            }
-        }
-    }
 
     public String[][] importEdges() throws FileNotFoundException {
         if(!map.has("ligacoes")) {
