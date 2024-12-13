@@ -165,7 +165,7 @@ public class Menu {
             resetMap();
         }
 
-        if(MaxLifePoints>0) {
+        if(MaxLifePoints>0.0) {
             System.out.println(path);
         }else{
             System.out.println("Não foi possivel terminar a missão por qualquer entrada");
