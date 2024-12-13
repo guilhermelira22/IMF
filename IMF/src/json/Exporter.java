@@ -18,7 +18,6 @@ import java.util.Iterator;
  */
 public class Exporter {
     private static final String path = "simulations/";
-    private static String EXTENSION = ".json";
 
     /**
      * Exports the given object to a JSON file with the specified file name.
@@ -31,7 +30,7 @@ public class Exporter {
         FileWriter fileopen = null;
         try {
             Gson gson = new Gson().newBuilder().setPrettyPrinting().create();
-            fileopen = new FileWriter(path + fileName + EXTENSION);
+            fileopen = new FileWriter(path + fileName);
             gson.toJson(obj, fileopen);
             fileopen.close();
         } catch (IOException ex) {
