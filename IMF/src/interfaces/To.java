@@ -2,9 +2,6 @@ package interfaces;
 
 public interface To {
 
-    Double getPower();
-    void setPower(Double power);
-
     Double getLifePoints();
     void setLifePoints(Double lifePoints);
     void reduceLifePoints(Double lifePoints);

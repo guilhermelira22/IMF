@@ -12,6 +12,7 @@ import json.Exporter;
 import json.MapBuilder;
 import orderedUnorderedList.ArrayOrderedList;
 import orderedUnorderedList.ArrayUnorderedList;
+import simulation.Automatic;
 import simulation.Manual;
 
 import java.io.File;
@@ -146,8 +147,10 @@ public class Menu {
         }
     }
 
-    private void simAuto() {
-
+    private void simAuto() throws NullException, InvalidTypeException, InvalidFileException, FileNotFoundException {
+        resetMap();
+        Automatic a = new Automatic(mission, mission.getDivision("Garagem"));
+        a.start();
     }
 
     private void simResult() {
@@ -163,40 +166,6 @@ public class Menu {
             }
         }
         System.out.println("\n");
-
-        /*try
-            MissionImpl simulation = new MapBuilder(file).readJsonLeaderboard(mission);
-
-            for (SimulationManualImpl m : simulation.getSimulation()) {
-                System.out.println(m.toString());
-            }*/
-
-            /*System.out.println("\nSimulações: \n");
-            if (simulation.isEmpty()) {
-                System.out.println("Nenhuma simulação efetuada.");
-            } else {
-                while (it.hasNext()) {
-                    System.out.println(it.next());
-                }
-            }
-        } catch (InvalidFileException e) {
-            System.out.println("Erro ao importar as simulações: " + e.getMessage());
-        } catch (FileNotFoundException | NullException | InvalidTypeException e) {
-            throw new RuntimeException(e);
-        }*/
-
-        /*ArrayOrderedList<SimulationManualImpl> simulation = mission.getSimulation();
-        Iterator<SimulationManualImpl> it = simulation.iterator();
-        System.out.println("\nSimulações: \n");
-        if (simulation.isEmpty()) {
-            System.out.println("Nenhuma simulação efetuada.");
-        } else {
-            while (it.hasNext()) {
-                System.out.println(it.next());
-            }
-        }
-        System.out.println("\n");
-        */
     }
 
     private void resetMap() throws InvalidFileException, FileNotFoundException, NullException, InvalidTypeException {
@@ -219,11 +188,6 @@ public class Menu {
             e.setLifePoints(100.0);
             e.getDivision().addEnemy(e);
         }
-
-        //MapBuilder importer = new MapBuilder(file);
-        //this.mission = importer.createMission();
-
-        //this.mission = importer.readJsonLeaderboard(this.mission);
     }
 
     private void pause(Scanner scanner) {
