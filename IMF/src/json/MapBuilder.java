@@ -20,7 +20,7 @@ import java.io.*;
 
 public class MapBuilder extends Import{
     private String file;
-    private static String pathExport = "maps/";
+    private static String pathExport = "simulations/";
     private static String EXTENSION = ".json";
     private DivisionImpl[] divisionImpls;
     private Enemy[] enemies;
