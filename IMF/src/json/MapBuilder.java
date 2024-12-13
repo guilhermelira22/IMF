@@ -1,3 +1,8 @@
+/**
+ * @author Guilherme Lira - 8210415
+ * @author Miguel Cunha - 8210426
+ */
+
 package json;
 
 import com.google.gson.Gson;
@@ -13,7 +18,6 @@ import graph.GraphMatrix;
 import interfaces.Division;
 import interfaces.Enemy;
 import interfaces.Item;
-import orderedUnorderedList.ArrayOrderedList;
 import orderedUnorderedList.ArrayUnorderedList;
 
 import java.io.*;

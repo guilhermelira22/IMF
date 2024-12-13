@@ -1,3 +1,8 @@
+/**
+ * @author Guilherme Lira - 8210415
+ * @author Miguel Cunha - 8210426
+ */
+
 package simulation;
 
 import Queue.Queue;
@@ -10,13 +15,8 @@ import graph.GraphMatrix;
 import interfaces.Division;
 import interfaces.Enemy;
 import interfaces.Item;
-import interfaces.Mission;
-import json.Exporter;
 import orderedUnorderedList.ArrayUnorderedList;
-import stack.LinkedStack;
-import interfaces.To;
 
-import java.io.File;
 import java.util.*;
 
 public class Manual {

@@ -1,3 +1,8 @@
+/**
+ * @author Guilherme Lira - 8210415
+ * @author Miguel Cunha - 8210426
+ */
+
 package interfaces;
 
 import entities.SimulationManualImpl;
@@ -6,6 +11,9 @@ import graph.GraphMatrix;
 import orderedUnorderedList.ArrayOrderedList;
 import orderedUnorderedList.ArrayUnorderedList;
 
+/**
+ * Interface to represent a Mission in the game.
+ */
 public interface Mission {
 
     /**
@@ -95,7 +103,7 @@ public interface Mission {
     boolean isValid();
 
     /**
-     * Retrieves the target division.
+     * Gets the target division.
      *
      * @return DivisionImpl representing the target division
      */

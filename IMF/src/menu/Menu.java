@@ -1,6 +1,10 @@
+/**
+ * @author Guilherme Lira - 8210415
+ * @author Miguel Cunha - 8210426
+ */
+
 package menu;
 
-import Queue.Queue;
 import entities.MissionImpl;
 import entities.SimulationManualImpl;
 import exceptions.InvalidFileException;
@@ -8,7 +12,6 @@ import exceptions.InvalidTypeException;
 import exceptions.NullException;
 import interfaces.Division;
 import interfaces.Enemy;
-import interfaces.SimulationManual;
 import json.Exporter;
 import json.MapBuilder;
 import orderedUnorderedList.ArrayOrderedList;

@@ -1,3 +1,8 @@
+/**
+ * @author Guilherme Lira - 8210415
+ * @author Miguel Cunha - 8210426
+ */
+
 package json;
 
 import com.google.gson.*;
@@ -8,8 +13,6 @@ import exceptions.InvalidTypeException;
 import exceptions.NullException;
 import interfaces.Division;
 import interfaces.Enemy;
-import interfaces.Item;
-import interfaces.Target;
 import orderedUnorderedList.ArrayUnorderedList;
 
 

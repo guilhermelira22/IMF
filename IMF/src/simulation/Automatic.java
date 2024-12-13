@@ -1,18 +1,20 @@
+/**
+ * @author Guilherme Lira - 8210415
+ * @author Miguel Cunha - 8210426
+ */
+
 package simulation;
 
 import Queue.Queue;
 import entities.ActionImpl;
 import entities.MissionImpl;
-import entities.SimulationManualImpl;
 import entities.ToImpl;
 import enums.Action_Type;
-import enums.Item_Type;
 import exceptions.InvalidTypeException;
 import exceptions.NullException;
 import heap.PriorityQueue;
 import interfaces.*;
 import orderedUnorderedList.ArrayUnorderedList;
-import stack.LinkedStack;
 
 import java.util.Iterator;
 
