@@ -1,13 +1,15 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+/**
+ * @author Guilherme Lira - 8210415
+ * @author Miguel Cunha - 8210426
  */
+
 package entities;
 
 import interfaces.Division;
 import interfaces.Enemy;
 
+import java.util.Arrays;
+import java.util.Iterator;
 
 /**
  * Estrutura de Dados - 2020-2021.

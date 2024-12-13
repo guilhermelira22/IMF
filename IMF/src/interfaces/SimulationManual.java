@@ -1,13 +1,21 @@
+/**
+ * @author Guilherme Lira - 8210415
+ * @author Miguel Cunha - 8210426
+ */
+
 package interfaces;
 
 import Queue.Queue;
 
+/**
+ * Interface to represent a manual simulation of a mission.
+ */
 public interface SimulationManual {
 
     /**
-            * Returns the life points at the end of the simulation.
-            *
-            * @return number of life points as a Double
+     * Returns the life points at the end of the simulation.
+     *
+     * @return number of life points as a Double
      */
     Double getLifePoints();
 
