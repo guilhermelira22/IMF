@@ -1,5 +1,6 @@
 package menu;
 
+import Queue.Queue;
 import entities.MissionImpl;
 import entities.SimulationManualImpl;
 import exceptions.InvalidFileException;
@@ -12,6 +13,7 @@ import json.Exporter;
 import json.MapBuilder;
 import orderedUnorderedList.ArrayOrderedList;
 import orderedUnorderedList.ArrayUnorderedList;
+import simulation.Automatic;
 import simulation.Manual;
 
 import java.io.File;
@@ -146,7 +148,26 @@ public class Menu {
         }
     }
 
-    private void simAuto() {
+    private void simAuto() throws NullException, InvalidTypeException, InvalidFileException, FileNotFoundException {
+        resetMap();
+        Double MaxLifePoints = 0.0;
+        String path = "";
+
+        for(Division div: mission.getExitEntry()){
+            Automatic a = new Automatic(mission, div);
+            a.start();
+            if(a.getLifePoints()> MaxLifePoints){
+                path = a.toString();
+                MaxLifePoints = a.getLifePoints();
+            }
+            resetMap();
+        }
+
+        if(MaxLifePoints>0) {
+            System.out.println(path);
+        }else{
+            System.out.println("Não foi possivel terminar a missão por qualquer entrada");
+        }
 
     }
 
@@ -163,40 +184,6 @@ public class Menu {
             }
         }
         System.out.println("\n");
-
-        /*try
-            MissionImpl simulation = new MapBuilder(file).readJsonLeaderboard(mission);
-
-            for (SimulationManualImpl m : simulation.getSimulation()) {
-                System.out.println(m.toString());
-            }*/
-
-            /*System.out.println("\nSimulações: \n");
-            if (simulation.isEmpty()) {
-                System.out.println("Nenhuma simulação efetuada.");
-            } else {
-                while (it.hasNext()) {
-                    System.out.println(it.next());
-                }
-            }
-        } catch (InvalidFileException e) {
-            System.out.println("Erro ao importar as simulações: " + e.getMessage());
-        } catch (FileNotFoundException | NullException | InvalidTypeException e) {
-            throw new RuntimeException(e);
-        }*/
-
-        /*ArrayOrderedList<SimulationManualImpl> simulation = mission.getSimulation();
-        Iterator<SimulationManualImpl> it = simulation.iterator();
-        System.out.println("\nSimulações: \n");
-        if (simulation.isEmpty()) {
-            System.out.println("Nenhuma simulação efetuada.");
-        } else {
-            while (it.hasNext()) {
-                System.out.println(it.next());
-            }
-        }
-        System.out.println("\n");
-        */
     }
 
     private void resetMap() throws InvalidFileException, FileNotFoundException, NullException, InvalidTypeException {
@@ -219,11 +206,6 @@ public class Menu {
             e.setLifePoints(100.0);
             e.getDivision().addEnemy(e);
         }
-
-        //MapBuilder importer = new MapBuilder(file);
-        //this.mission = importer.createMission();
-
-        //this.mission = importer.readJsonLeaderboard(this.mission);
     }
 
     private void pause(Scanner scanner) {

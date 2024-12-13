@@ -20,7 +20,7 @@ import java.io.*;
 
 public class MapBuilder extends Import{
     private String file;
-    private static String pathExport = "maps/";
+    private static String pathExport = "simulations/";
     private static String EXTENSION = ".json";
     private DivisionImpl[] divisionImpls;
     private Enemy[] enemies;
@@ -50,6 +50,10 @@ public class MapBuilder extends Import{
             throw new InvalidFileException("Entries exits divisions are invalid");
         } else if (!isDivisionEdgesValid()) {
             throw new InvalidFileException("Edges is invalid");
+        } else if (!isItemsValid()){
+            throw new InvalidFileException("Items are invalid");
+        } else if (!isEnemiesValid()){
+            throw new InvalidFileException("Enemies are invalid");
         }
         MissionImpl mission = new MissionImpl(missonJson.getCod(), missonJson.getVersion(), missonJson.getTarget(), entriesExits, building);
 
@@ -154,5 +158,28 @@ public class MapBuilder extends Import{
         return true;
     }
 
+    public boolean isItemsValid() {
+        int count = 0;
+        for(Item item: items) {
+            for (Division div : divisionImpls) {
+                if(div == item.getDivision()){
+                    count++;
+                }
+            }
+        }
+        return count == items.length;
+    }
+
+    public boolean isEnemiesValid() {
+        int count = 0;
+        for(Enemy enemy: enemies) {
+            for (Division div : divisionImpls) {
+                if(div == enemy.getDivision()){
+                    count++;
+                }
+            }
+        }
+        return count == enemies.length;
+    }
 
 }

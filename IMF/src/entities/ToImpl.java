@@ -1,10 +1,11 @@
 package entities;
 
 import enums.Item_Type;
-import interfaces.Division;
-import interfaces.Item;
-import interfaces.To;
+import graph.GraphMatrix;
+import interfaces.*;
 import stack.LinkedStack;
+
+import java.util.Iterator;
 
 public class ToImpl implements To {
 
@@ -19,16 +20,6 @@ public class ToImpl implements To {
         this.power = power;
         this.lifePoints = 100.0;
         this.backpack = new LinkedStack<>();
-    }
-
-    @Override
-    public Double getPower() {
-        return this.power;
-    }
-
-    @Override
-    public void setPower(Double power) {
-        this.power = power;
     }
 
     @Override
@@ -66,7 +57,13 @@ public class ToImpl implements To {
         if(this.backpack.isEmpty()) {
             return null;
         }
-        return this.backpack.pop();
+        return this.backpack.peek();
+    }
+
+    public void useItem() {
+        if(!this.backpack.isEmpty()) {
+            addLifePoints(backpack.pop().getAmount());
+        }
     }
 
     @Override
@@ -91,5 +88,63 @@ public class ToImpl implements To {
             }
         }
         return false;
+    }
+
+    public Iterator<Division> getBestPathToClosestKit(Mission mission) {
+        GraphMatrix<Division> graph = mission.getBuilding();
+
+        int shortestDistance = Integer.MAX_VALUE;
+        Iterator<Division> pathIterator = null;
+
+        for (Item kit : mission.getAllItems()) {
+            if (kit.getDivision() != null) {
+                Division kitDivision = kit.getDivision();
+                pathIterator = graph.iteratorShortestPath(this.division, kitDivision);
+                Iterator<Division> pathIteratorCount = graph.iteratorShortestPath(this.division, kitDivision);
+                int pathLength = calculatePathLength(pathIteratorCount);
+
+                if (pathLength < shortestDistance) {
+                    shortestDistance = pathLength;
+                }
+            }
+        }
+
+        return pathIterator;
+    }
+
+    public Iterator<Division> getBestPathToClosestExit(Mission mission) {
+        GraphMatrix<Division> graph = mission.getBuilding();
+
+        int shortestDistance = Integer.MAX_VALUE;
+        Iterator<Division> pathIterator = null;
+
+        for (Division div : mission.getDivisions()) {
+            if (div.isEntryExit()) {
+                pathIterator = graph.iteratorShortestPath(this.division, div);
+                Iterator<Division> pathIteratorCount = graph.iteratorShortestPath(this.division, div);
+                int pathLength = calculatePathLength(pathIteratorCount);
+
+                if (pathLength < shortestDistance) {
+                    shortestDistance = pathLength;
+                }
+            }
+        }
+
+        return pathIterator;
+    }
+
+    public int calculatePathLength(Iterator<Division> pathIterator) {
+        int length = 0;
+        Division previous = null;
+
+        while (pathIterator.hasNext()) {
+            Division current = pathIterator.next();
+            if (previous != null) {
+                length++;
+            }
+            previous = current;
+        }
+
+        return length;
     }
 }

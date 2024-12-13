@@ -9,7 +9,7 @@ import java.io.*;
 import java.util.Iterator;
 
 public class Exporter {
-    private static final String path = "maps/";
+    private static final String path = "simulations/";
     private static String EXTENSION = ".json";
 
     private static void exporter(Object obj, String fileName) {
