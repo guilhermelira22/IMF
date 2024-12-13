@@ -9,5 +9,4 @@ public interface Action {
     public Division getDivision();
     public void setDivision(Division division);
 
-    public boolean isEnemy();
 }

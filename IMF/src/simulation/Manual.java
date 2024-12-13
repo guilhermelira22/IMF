@@ -19,22 +19,21 @@ import java.util.*;
 
 public class Manual {
 
-    private static final Double LIFE_DEFAULT = 100.0;
-    private static final int POWER = 40;
+    private static final Double POWER = 40.0;
     private static final String STRING_AUX = "\n*-*-*-*-*-*-*-*-*\n";
 
     private Queue<Division> path;
     private MissionImpl mission;
     private boolean flagLeft;
     private boolean flagTarget;
-    private To toCruz;
+    private ToImpl toCruz;
 
     public Manual(MissionImpl mission) {
         this.mission = mission;
         this.flagLeft = false;
         this.flagTarget = false;
         this.path = new Queue<Division>();
-        this.toCruz = new ToImpl(40.0);
+        this.toCruz = new ToImpl(POWER);
     }
 
     public void start() throws InvalidFileException, NullException, InvalidTypeException {
@@ -69,7 +68,7 @@ public class Manual {
                 path.enqueue(toCruz.getDivision());
                 if (toCruz.getDivision().sizeEnemies() != 0) {
                     System.out.println("Entrou numa divisão com inimigos! Divisão Atual: " + toCruz.getDivision().getName());
-                    attackAllEnemies();
+                    toCruz.attackAllEnemies();
                     toCruz.reduceLifePoints(toCruz.getDivision().getEnemiesPower());
                     for (Enemy enemy : toCruz.getDivision().getEnemies()) {
                         System.out.println("Inimigo " + enemy.getName() + " atacou! Dano: " + enemy.getPower());
@@ -134,7 +133,7 @@ public class Manual {
 
                 if (toCruz.getDivision().sizeEnemies() != 0) {
                     System.out.println("Entrou numa divisão com inimigos! Divisão Atual: " + toCruz.getDivision().getName());
-                    attackAllEnemies();
+                    toCruz.attackAllEnemies();
                     toCruz.reduceLifePoints(toCruz.getDivision().getEnemiesPower());
                     if (toCruz.getDivision().sizeEnemies() != 0) {
                         mission.moveEnemies(mission.getAllEnemies(), toCruz.getDivision(), toCruz.getLifePoints(), true);
@@ -171,22 +170,6 @@ public class Manual {
         }
     }
 
-    protected void attackAllEnemies() {
-        Enemy[] enemies = toCruz.getDivision().getEnemies();
-        int j = enemies.length;
-        for (int i = 0; i < j; i++) {
-            enemies[i].setLifePoints(enemies[i].getLifePoints() - POWER);
-            if (enemies[i].getLifePoints() <= 0) {
-                System.out.println("Matou o inimigo: " + enemies[i].getName());
-                toCruz.getDivision().removeEnemy(enemies[i]);
-                i--;
-                j--;
-            } else {
-                System.out.println("Atacou o inimigo " + enemies[i].getName() + "! Pontos de vida do inimigo: " + enemies[i].getLifePoints());
-            }
-        }
-    }
-
     private void encounter() throws NullException, InvalidTypeException {
         Scanner scan = new Scanner(System.in, "ISO-8859-1");
 
@@ -196,7 +179,7 @@ public class Manual {
 
             switch (action) {
                 case "1":
-                    attackAllEnemies();
+                    toCruz.attackAllEnemies();
                     toCruz.reduceLifePoints(toCruz.getDivision().getEnemiesPower());
                     for (Enemy enemy : toCruz.getDivision().getEnemies()) {
                         System.out.println("Inimigo " + enemy.getName() + " atacou! Dano: " + enemy.getPower());
@@ -229,11 +212,6 @@ public class Manual {
             }
         }
         return false;
-    }
-
-    public void enemiesAttack(Enemy enemy) {
-        toCruz.reduceLifePoints(enemy.getPower());
-        System.out.println("Inimigo " + enemy.getName() + " atacou! Dano: " + enemy.getPower());
     }
 
     private void useMedicalKit() throws NullException, InvalidTypeException {
@@ -301,34 +279,10 @@ public class Manual {
 
         GraphMatrix<Division> shortestPath = mission.getBuilding();
         String bestPathForTarget = iteratorToString(shortestPath.iteratorShortestPath(toCruz.getDivision(), mission.getTarget().getDivision()));
-        String bestPathForKit = getBestPathToClosestKit();
+        String bestPathForKit = iteratorToString(toCruz.getBestPathToClosestKit(mission));
 
         System.out.println("Melhor caminho para o alvo: " + bestPathForTarget);
         System.out.println("Melhor caminho para o kit médico mais próximo: " + bestPathForKit);
-    }
-
-    public String getBestPathToClosestKit() {
-        GraphMatrix<Division> graph = mission.getBuilding();
-        Division currentDivision = toCruz.getDivision();
-
-        int shortestDistance = Integer.MAX_VALUE;
-        String bestPath = "Nenhum kit médico disponível.";
-
-        for (Item kit : mission.getAllItems()) {
-            if (kit.getDivision() != null) {
-                Division kitDivision = kit.getDivision();
-                Iterator<Division> pathIterator = graph.iteratorShortestPath(currentDivision, kitDivision);
-                Iterator<Division> pathIteratorCount = graph.iteratorShortestPath(currentDivision, kitDivision);
-                int pathLength = calculatePathLength(pathIteratorCount);
-
-                if (pathLength < shortestDistance) {
-                    shortestDistance = pathLength;
-                    bestPath = iteratorToString(pathIterator);
-                }
-            }
-        }
-
-        return bestPath;
     }
 
     private String iteratorToString(Iterator<Division> pathIterator) {
@@ -340,21 +294,6 @@ public class Manual {
             }
         }
         return path.toString();
-    }
-
-    private int calculatePathLength(Iterator<Division> pathIterator) {
-        int length = 0;
-        Division previous = null;
-
-        while (pathIterator.hasNext()) {
-            Division current = pathIterator.next();
-            if (previous != null) {
-                length++;
-            }
-            previous = current;
-        }
-
-        return length;
     }
 
     private String getFinalPath() {

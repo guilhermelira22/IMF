@@ -4,6 +4,7 @@ import entities.MissionImpl;
 import exceptions.InvalidFileException;
 import exceptions.InvalidTypeException;
 import exceptions.NullException;
+import simulation.Automatic;
 import simulation.Manual;
 
 import java.util.Scanner;
@@ -24,8 +25,12 @@ public class Menu {
     public void beginMission(MissionImpl mission) throws InvalidFileException, NullException, InvalidTypeException {
         System.out.println("Iniciar Missão");
 
-        Manual manual = new Manual(mission);
-        manual.start();
+        //Manual manual = new Manual(mission);
+        //manual.start();
+
+
+        Automatic auto = new Automatic(mission, mission.getDivision("Garagem"));
+        auto.start();
     }
 
 }

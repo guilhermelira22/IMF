@@ -446,16 +446,18 @@ public class MissionImpl implements Mission {
         for (Enemy enemy :  enemies) {
             Division currentDivision = getDivision(enemy.getCurrentDivision().getName());
             Division[] reachableDivisions = getReachableDivisions(currentDivision.getName(), 2, enemy);
-            if (reachableDivisions != null && reachableDivisions.length > 0) {
-                String newDivisionString = getRandomDivision(reachableDivisions, enemy);
-                for (int i = 0; i < reachableDivisions.length; i++) {
-                    if (reachableDivisions[i].getName().equals(newDivisionString)) {
-                        if (getDivision(currentDivision.getName()).removeEnemy(enemy)) {
-                            enemy.setCurrentDivision(reachableDivisions[i]);
-                            getDivision(reachableDivisions[i].getName()).addEnemy(enemy);
-                            if (reachableDivisions[i].equals(currentDivTo)) {
-                                enemiesEncountered.addToRear(enemy);
-                                enemiesAttack(enemy, lifePoints);
+            if(currentDivision != currentDivTo) {
+                if (reachableDivisions != null && reachableDivisions.length > 0) {
+                    String newDivisionString = getRandomDivision(reachableDivisions, enemy);
+                    for (int i = 0; i < reachableDivisions.length; i++) {
+                        if (reachableDivisions[i].getName().equals(newDivisionString)) {
+                            if (getDivision(currentDivision.getName()).removeEnemy(enemy)) {
+                                enemy.setCurrentDivision(reachableDivisions[i]);
+                                getDivision(reachableDivisions[i].getName()).addEnemy(enemy);
+                                if (reachableDivisions[i].equals(currentDivTo)) {
+                                    enemiesEncountered.addToRear(enemy);
+                                    enemiesAttack(enemy, lifePoints);
+                                }
                             }
                         }
                     }

@@ -1,5 +1,7 @@
 package interfaces;
 
+import java.util.Iterator;
+
 public interface To {
 
     Double getPower();
@@ -16,6 +18,8 @@ public interface To {
     Item getItem();
     boolean addMedicakKit();
     public boolean addVest();
+
+    public Iterator<Division> getBestPathToClosestKit(Mission mission);
 
 
 

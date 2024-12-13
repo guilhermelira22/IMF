@@ -8,18 +8,10 @@ public class ActionImpl implements Action {
 
     private Division division;
     private Action_Type actionType;
-    private boolean isEnemy;
-
-    public ActionImpl(Division division, Action_Type actionType, boolean isEnemy) {
-        this.division = division;
-        this.actionType = actionType;
-        this.isEnemy = isEnemy;
-    }
 
     public ActionImpl(Division division, Action_Type actionType) {
         this.division = division;
         this.actionType = actionType;
-        this.isEnemy = false;
     }
 
     @Override
@@ -42,8 +34,4 @@ public class ActionImpl implements Action {
         this.division = division;
     }
 
-    @Override
-    public boolean isEnemy() {
-        return this.isEnemy;
-    }
 }
