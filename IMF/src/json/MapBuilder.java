@@ -20,7 +20,7 @@ import java.io.*;
 
 public class MapBuilder extends Import{
     private String file;
-    private static String pathExport = "simulations/";
+    private static String pathExport = "maps/";
     private static String EXTENSION = ".json";
     private DivisionImpl[] divisionImpls;
     private Enemy[] enemies;
@@ -53,7 +53,7 @@ public class MapBuilder extends Import{
         }
         MissionImpl mission = new MissionImpl(missonJson.getCod(), missonJson.getVersion(), missonJson.getTarget(), entriesExits, building);
 
-        return mission;
+        return readJsonLeaderboard(mission);
     }
 
     public MissionImpl readJsonLeaderboard(MissionImpl mission) throws InvalidFileException {

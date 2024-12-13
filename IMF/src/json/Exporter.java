@@ -2,13 +2,14 @@ package json;
 
 import com.google.gson.*;
 import entities.SimulationManualImpl;
+import interfaces.SimulationManual;
 import orderedUnorderedList.ArrayOrderedList;
 
 import java.io.*;
 import java.util.Iterator;
 
 public class Exporter {
-    private static final String path = "simulations/";
+    private static final String path = "maps/";
     private static String EXTENSION = ".json";
 
     private static void exporter(Object obj, String fileName) {
@@ -24,7 +25,18 @@ public class Exporter {
     }
 
     public static void exportToJson(ArrayOrderedList<SimulationManualImpl> manual, String fileName) {
-        try (FileWriter writer = new FileWriter(path + fileName + EXTENSION, true)) {
+
+        Iterator it = manual.iterator();
+        SimulationManual[] temp = new SimulationManual[manual.size()];
+        int i = 0;
+        while (it.hasNext()) {
+            SimulationManual simulation = (SimulationManual) it.next();
+            temp[i] = new SimulationManualImpl(simulation.getLifePoints(), simulation.getPath(), simulation.isGetTarget());
+            i++;
+        }
+        Exporter.exporter(temp, fileName);
+
+        /*try (FileWriter writer = new FileWriter(path + fileName + EXTENSION, true)) {
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
             SimulationManualImpl[] tempArray = new SimulationManualImpl[manual.size()];
@@ -39,6 +51,6 @@ public class Exporter {
             writer.write(gson.toJson(tempArray));
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
-        }
+        }*/
     }
 }

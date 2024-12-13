@@ -64,6 +64,8 @@ public class MissionImpl implements Mission {
      */
     private ArrayOrderedList<SimulationManualImpl> simulation;
 
+    ArrayUnorderedList<Enemy> deadEnemies = new ArrayUnorderedList<Enemy>();
+
     /**
      * Construtor vazio que cria uma Mission para o Tó Cruz.
      */
@@ -129,6 +131,15 @@ public class MissionImpl implements Mission {
         this.exitEntry = exitEntry;
         this.building = building;
         this.simulation = new ArrayOrderedList<SimulationManualImpl>();
+    }
+
+    public MissionImpl(String cod, Integer version, Target target, ArrayUnorderedList<Division> exitEntry, GraphMatrix<Division> building, ArrayOrderedList<SimulationManualImpl> simulation) {
+        this.cod = cod;
+        this.version = version;
+        this.target = target;
+        this.exitEntry = exitEntry;
+        this.building = building;
+        this.simulation = simulation;
     }
 
     /**
@@ -377,6 +388,14 @@ public class MissionImpl implements Mission {
             }
         }
         return allItems;
+    }
+
+    public ArrayUnorderedList<Enemy> getDeadEnemies() {
+        return deadEnemies;
+    }
+
+    public void setDeadEnemies(ArrayUnorderedList<Enemy> deadEnemies) {
+        this.deadEnemies = deadEnemies;
     }
 
     /**

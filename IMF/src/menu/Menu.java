@@ -23,6 +23,7 @@ public class Menu {
 
     private String file;
     private MissionImpl mission;
+    private int x = 0;
 
     public Menu() throws InvalidFileException, NullException, InvalidTypeException, FileNotFoundException {
         mission = new MissionImpl();
@@ -150,12 +151,25 @@ public class Menu {
     }
 
     private void simResult() {
-        try {
+
+        ArrayOrderedList<SimulationManualImpl> simulation = mission.getSimulation();
+        Iterator<SimulationManualImpl> it = simulation.iterator();
+        System.out.println("\nSimulações: ");
+        if (simulation.isEmpty()) {
+            System.out.println("\tAinda Não Existem Simulações\n\tFaça A Sua Primeira Simulação!");
+        } else {
+            while (it.hasNext()) {
+                System.out.println(it.next());
+            }
+        }
+        System.out.println("\n");
+
+        /*try
             MissionImpl simulation = new MapBuilder(file).readJsonLeaderboard(mission);
 
             for (SimulationManualImpl m : simulation.getSimulation()) {
                 System.out.println(m.toString());
-            }
+            }*/
 
             /*System.out.println("\nSimulações: \n");
             if (simulation.isEmpty()) {
@@ -183,14 +197,33 @@ public class Menu {
         }
         System.out.println("\n");
         */
-        } catch (InvalidFileException | InvalidTypeException | NullException | FileNotFoundException e) {
-            throw new RuntimeException(e);
-        }
     }
 
-        private void resetMap() throws InvalidFileException, FileNotFoundException, NullException, InvalidTypeException {
-        MapBuilder importer = new MapBuilder(file);
-        this.mission = importer.createMission();
+    private void resetMap() throws InvalidFileException, FileNotFoundException, NullException, InvalidTypeException {
+        for (Division d : mission.getDivisions()) {
+            for (Enemy e : d.getEnemies()) {
+                if (e != null) {
+                    if (d != e.getDivision()) {
+                        e.setCurrentDivision(e.getDivision());
+                        d.removeEnemy(e);
+                        e.getDivision().addEnemy(e);
+                        e.setLifePoints(100.0);
+                    }
+                }
+            }
+        }
+
+        ArrayUnorderedList<Enemy> deadEnemies = mission.getDeadEnemies();
+        for (Enemy e : deadEnemies) {
+            e.setCurrentDivision(e.getDivision());
+            e.setLifePoints(100.0);
+            e.getDivision().addEnemy(e);
+        }
+
+        //MapBuilder importer = new MapBuilder(file);
+        //this.mission = importer.createMission();
+
+        //this.mission = importer.readJsonLeaderboard(this.mission);
     }
 
     private void pause(Scanner scanner) {

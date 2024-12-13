@@ -30,6 +30,7 @@ public class Manual {
     private boolean flagLeft;
     private boolean flagTarget;
     private To toCruz;
+    ArrayUnorderedList<Enemy> deadEnemies = new ArrayUnorderedList<Enemy>();
 
     public Manual(MissionImpl mission) {
         this.mission = mission;
@@ -46,7 +47,6 @@ public class Manual {
         playGame();
 
         SimulationManualImpl newSimulation = new SimulationManualImpl(toCruz.getLifePoints(), path, flagTarget);
-        Exporter.exportToJson(mission.getSimulation(), file);
         try {
             mission.addSimulation(newSimulation);
         } catch (NullException ex) {
@@ -181,6 +181,7 @@ public class Manual {
             enemies[i].setLifePoints(enemies[i].getLifePoints() - POWER);
             if (enemies[i].getLifePoints() <= 0) {
                 System.out.println("Matou o inimigo: " + enemies[i].getName());
+                deadEnemies.addToFront(enemies[i]);
                 toCruz.getDivision().removeEnemy(enemies[i]);
                 i--;
                 j--;
@@ -188,6 +189,11 @@ public class Manual {
                 System.out.println("Atacou o inimigo " + enemies[i].getName() + "! Pontos de vida do inimigo: " + enemies[i].getLifePoints());
             }
         }
+        setgetDeadEnemies();
+    }
+
+    public void setgetDeadEnemies() {
+        mission.setDeadEnemies(deadEnemies);
     }
 
     private void encounter() throws NullException, InvalidTypeException {

@@ -23,7 +23,7 @@ public interface SimulationManual {
      *
      * @return Queue of DivisionImpl representing the path
      */
-    Queue<Division> getPath();
+    String[] getPath();
 
     /**
      * Sets the path for the simulation.
