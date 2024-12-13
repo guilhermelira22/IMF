@@ -29,7 +29,6 @@ import java.io.*;
 public class MapBuilder extends Import{
     private String file;
     private final static String pathExport = "simulations/";
-    private final static String EXTENSION = ".json";
     private DivisionImpl[] divisionImpls;
     private Enemy[] enemies;
     private String[][] edges;
@@ -86,7 +85,7 @@ public class MapBuilder extends Import{
      * @throws InvalidFileException if any of the specifications are invalid
      */
     public MissionImpl readJsonLeaderboard(MissionImpl mission) throws InvalidFileException {
-        String path = pathExport + this.file + EXTENSION;
+        String path = pathExport + this.file;
         File f = new File(path);
         if (f.exists()) {
             try {
