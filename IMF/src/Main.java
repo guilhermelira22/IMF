@@ -1,8 +1,11 @@
-import entities.*;
+/**
+ * @author Guilherme Lira - 8210415
+ * @author Miguel Cunha - 8210426
+ */
+
 import exceptions.InvalidFileException;
 import exceptions.InvalidTypeException;
 import exceptions.NullException;
-import json.MapBuilder;
 import menu.Menu;
 
 import java.io.FileNotFoundException;

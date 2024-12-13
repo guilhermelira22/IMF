@@ -1,5 +1,13 @@
+/**
+ * @author Guilherme Lira - 8210415
+ * @author Miguel Cunha - 8210426
+ */
+
 package interfaces;
 
+/**
+ * Interface to represent a Target in the game.
+ */
 public interface Target {
 
     /**
@@ -27,12 +35,6 @@ public interface Target {
      * Checks if the target is valid.
      *
      * @return true if the target is valid, false otherwise
-     *
-     * Validity criteria:
-     * - Division must not be null
-     * - Division name must not be blank
-     * - Type must not be null
-     * - Type must not be blank
      */
     boolean isValid();
 
