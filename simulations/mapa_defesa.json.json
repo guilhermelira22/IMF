@@ -1,5 +1,17 @@
 [
   {
+    "lifePoints": 95.0,
+    "path": [
+      "Porteiro",
+      "Escada 2",
+      "Corredor1",
+      "Escritorio1",
+      "EscadadeEmergencia",
+      "Garagem"
+    ],
+    "getTarget": true
+  },
+  {
     "lifePoints": 70.0,
     "path": [
       "EscadadeEmergencia",

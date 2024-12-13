@@ -3,16 +3,13 @@ package simulation;
 import Queue.Queue;
 import entities.ActionImpl;
 import entities.MissionImpl;
-import entities.SimulationManualImpl;
 import entities.ToImpl;
 import enums.Action_Type;
-import enums.Item_Type;
 import exceptions.InvalidTypeException;
 import exceptions.NullException;
 import heap.PriorityQueue;
 import interfaces.*;
 import orderedUnorderedList.ArrayUnorderedList;
-import stack.LinkedStack;
 
 import java.util.Iterator;
 
@@ -38,7 +35,7 @@ public class Automatic {
         this.flagTarget = false;
         this.flagKit = false;
         this.startDiv = startDiv;
-        this.path = new PriorityQueue<Action>();
+        this.path = new PriorityQueue<>();
         this.completePath = new Queue<Division>();
         this.completePathString = new String[100];
         this.toCruz = new ToImpl(POWER);
@@ -135,7 +132,7 @@ public class Automatic {
         setPath(completePath);
     }
 
-    public boolean checkRoom(Division division){
+    private boolean checkRoom(Division division){
         for(Enemy enemy: mission.getAllEnemies()){
             Division[] reachableDiv = mission.getReachableDivisions(enemy.getCurrentDivision().getName(), 2, enemy);
             for(Division d: reachableDiv){
@@ -154,7 +151,7 @@ public class Automatic {
         return true;
     }
 
-    public void goToKit(PriorityQueue<Action> path,Iterator<Division> pathToKit){
+    private void goToKit(PriorityQueue<Action> path,Iterator<Division> pathToKit){
         int i=0;
         PriorityQueue<Action> newPath = new PriorityQueue<>();
         Division next = null;
@@ -182,7 +179,7 @@ public class Automatic {
 
     }
 
-    public void goExit(Iterator<Division> pathToExit){
+    private void goExit(Iterator<Division> pathToExit){
         int i=0;
         while(pathToExit.hasNext()){
             Division next = pathToExit.next();
@@ -194,7 +191,7 @@ public class Automatic {
         }
     }
 
-    protected void attackAllEnemies() {
+    private void attackAllEnemies() {
         Enemy[] enemies = toCruz.getDivision().getEnemies();
         int j = enemies.length;
         for (int i = 0; i < j; i++) {
@@ -209,11 +206,11 @@ public class Automatic {
         setgetDeadEnemies();
     }
 
-    public void setgetDeadEnemies() {
+    private void setgetDeadEnemies() {
         mission.setDeadEnemies(deadEnemies);
     }
 
-    public void setPath(Queue<Division> path) {
+    private void setPath(Queue<Division> path) {
         this.completePathString = new String[completePath.size()];
         int i = 0;
         while (!path.isEmpty()) {

@@ -8,8 +8,6 @@ import exceptions.InvalidTypeException;
 import exceptions.NullException;
 import interfaces.Division;
 import interfaces.Enemy;
-import interfaces.Item;
-import interfaces.Target;
 import orderedUnorderedList.ArrayUnorderedList;
 
 
@@ -21,15 +19,8 @@ public class Import {
     private final String file;
     private final String path = "maps/";
     private JsonObject map;
-    private DivisionImpl[] building;
-    private ArrayUnorderedList<DivisionImpl> entriesExits;
-    private ItemImpl[] items;
-    private EnemyImpl[] enemies;
-    private String[][] edges;
-    private TargetImpl target;
 
-
-    public Import(String file) throws FileNotFoundException, InvalidFileException, NullException, InvalidTypeException {
+    public Import(String file) throws FileNotFoundException{
         this.file = path + file;
         this.map = readFile();
     }
@@ -37,7 +28,7 @@ public class Import {
 
     private JsonObject readFile() throws FileNotFoundException {
         if(file == null) {
-            throw new FileNotFoundException("file is null");
+            throw new FileNotFoundException("File is null");
         }
         try{
             BufferedReader br = new BufferedReader(new FileReader(file));
@@ -45,11 +36,11 @@ public class Import {
             JsonElement element = JsonParser.parseReader(br);
             return element.getAsJsonObject();
         } catch (FileNotFoundException e) {
-            throw new FileNotFoundException("file not found");
+            throw new FileNotFoundException("File not found");
         }
     }
 
-    public DivisionImpl[] importDivisions() throws FileNotFoundException, InvalidFileException, NullException, InvalidTypeException {
+    public DivisionImpl[] importDivisions(){
 
         JsonArray divisionsArray = map.getAsJsonArray("edificio");
         DivisionImpl[] building = new DivisionImpl[divisionsArray.size()];
@@ -80,11 +71,11 @@ public class Import {
 
             MissionImpl mission = new MissionImpl(mission_name, mission_version, missionTarget);
             if (!mission.isValid()) {
-                throw new InvalidFileException("mission is invalid");
+                throw new InvalidFileException("Mission is invalid");
             }
             return mission;
         } catch (Exception e) {
-            throw new InvalidFileException("mission is invalid");
+            throw new InvalidFileException("Mission is invalid");
         }
     }
 
@@ -157,7 +148,7 @@ public class Import {
     }
 
 
-    public ArrayUnorderedList<Division> importEntryExits(Division[] building) throws InvalidFileException{
+    public ArrayUnorderedList<Division> importEntryExits(Division[] building){
         JsonArray divisionsArray = map.getAsJsonArray("entradas-saidas");
         ArrayUnorderedList <Division> entriesExits= new ArrayUnorderedList<>();
 

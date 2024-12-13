@@ -5,7 +5,6 @@
  */
 package entities;
 
-import com.google.gson.annotations.SerializedName;
 import interfaces.Division;
 import interfaces.Target;
 
@@ -26,13 +25,11 @@ public class TargetImpl implements Target {
      * Representa a divisão alvo, ou seja a divisão onde se deseja chegar no
      * edifício;
      */
-    @SerializedName(value = "division", alternate = {"divisao"})
     private Division division;
 
     /**
      * Representa o tipo do alvo que se deseja resgatar na missão.
      */
-    @SerializedName(value = "type", alternate = {"tipo"})
     private String type;
 
     /**

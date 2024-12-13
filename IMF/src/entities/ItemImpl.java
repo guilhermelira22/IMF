@@ -11,7 +11,6 @@ public class ItemImpl implements Item {
 
     private Item_Type type;
 
-    @SerializedName(value = "division", alternate = {"divisao"})
     private Division division;
 
     public ItemImpl(double amount, Item_Type type, DivisionImpl divisionImpl) {
@@ -41,7 +40,7 @@ public class ItemImpl implements Item {
     }
 
     public void setDivision(Division divisionImpl) {
-        this.division = division;
+        this.division = divisionImpl;
     }
 
     public boolean isValid() {

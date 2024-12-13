@@ -5,16 +5,9 @@
  */
 package entities;
 
-import Queue.Queue;
-import exceptions.InvalidTypeException;
-import exceptions.NullException;
 import interfaces.Division;
 import interfaces.Enemy;
-import com.google.gson.annotations.SerializedName;
-import orderedUnorderedList.ArrayUnorderedList;
 
-import java.util.Arrays;
-import java.util.Iterator;
 
 /**
  * Estrutura de Dados - 2020-2021.
@@ -161,14 +154,6 @@ public class EnemyImpl implements Enemy {
         this.currentDivision = currentDivision;
     }
 
-    public ArrayUnorderedList<String> adjecentDivisions() {
-        ArrayUnorderedList<String> divisions = new ArrayUnorderedList<String>();
-        for (int i = 0; i < currentDivision.getEdges().size(); i++) {
-            divisions = currentDivision.getEdges();
-        }
-        return divisions;
-    }
-
     public Double getLifePoints() {
         return lifePoints;
     }
@@ -197,14 +182,10 @@ public class EnemyImpl implements Enemy {
      * @return verdadeiro se o array de inimigos for valido, falso caso contrario.
      */
     public static boolean isValid(EnemyImpl[] enemies) {
-        boolean send = true;
+        boolean send = enemies.length != 0;
 
-        if (enemies.length == 0) {
-            send = false;
-        }
-
-        for (int i = 0; i < enemies.length; i++) {
-            if (enemies[i] == null || !enemies[i].isValid()) {
+        for (EnemyImpl enemy : enemies) {
+            if (enemy == null || !enemy.isValid()) {
                 send = false;
                 break;
             }
