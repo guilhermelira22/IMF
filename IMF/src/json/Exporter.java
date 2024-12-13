@@ -1,15 +1,15 @@
 package json;
 
-import com.google.gson.Gson;
+import com.google.gson.*;
 import entities.SimulationManualImpl;
+import interfaces.SimulationManual;
 import orderedUnorderedList.ArrayOrderedList;
 
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.Iterator;
 
 public class Exporter {
-    private static final String path = "simulations/";
+    private static final String path = "maps/";
     private static String EXTENSION = ".json";
 
     private static void exporter(Object obj, String fileName) {
@@ -25,14 +25,32 @@ public class Exporter {
     }
 
     public static void exportToJson(ArrayOrderedList<SimulationManualImpl> manual, String fileName) {
+
         Iterator it = manual.iterator();
-        SimulationManualImpl[] temp = new SimulationManualImpl[manual.size()];
+        SimulationManual[] temp = new SimulationManual[manual.size()];
         int i = 0;
         while (it.hasNext()) {
-            SimulationManualImpl simulation = (SimulationManualImpl) it.next();
+            SimulationManual simulation = (SimulationManual) it.next();
             temp[i] = new SimulationManualImpl(simulation.getLifePoints(), simulation.getPath(), simulation.isGetTarget());
             i++;
         }
         Exporter.exporter(temp, fileName);
+
+        /*try (FileWriter writer = new FileWriter(path + fileName + EXTENSION, true)) {
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+
+            SimulationManualImpl[] tempArray = new SimulationManualImpl[manual.size()];
+            Iterator<SimulationManualImpl> iterator = manual.iterator();
+            int index = 0;
+            while (iterator.hasNext()) {
+                tempArray[index++] = iterator.next();
+            }
+
+            writer.write("\n");
+
+            writer.write(gson.toJson(tempArray));
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        }*/
     }
 }

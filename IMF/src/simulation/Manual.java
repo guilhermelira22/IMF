@@ -11,10 +11,12 @@ import interfaces.Division;
 import interfaces.Enemy;
 import interfaces.Item;
 import interfaces.Mission;
+import json.Exporter;
 import orderedUnorderedList.ArrayUnorderedList;
 import stack.LinkedStack;
 import interfaces.To;
 
+import java.io.File;
 import java.util.*;
 
 public class Manual {
@@ -28,6 +30,7 @@ public class Manual {
     private boolean flagLeft;
     private boolean flagTarget;
     private To toCruz;
+    ArrayUnorderedList<Enemy> deadEnemies = new ArrayUnorderedList<Enemy>();
 
     public Manual(MissionImpl mission) {
         this.mission = mission;
@@ -37,7 +40,7 @@ public class Manual {
         this.toCruz = new ToImpl(40.0);
     }
 
-    public void start() throws InvalidFileException, NullException, InvalidTypeException {
+    public void start(String file) throws InvalidFileException, NullException, InvalidTypeException {
 
         chooseStartDivision();
 
@@ -178,6 +181,7 @@ public class Manual {
             enemies[i].setLifePoints(enemies[i].getLifePoints() - POWER);
             if (enemies[i].getLifePoints() <= 0) {
                 System.out.println("Matou o inimigo: " + enemies[i].getName());
+                deadEnemies.addToFront(enemies[i]);
                 toCruz.getDivision().removeEnemy(enemies[i]);
                 i--;
                 j--;
@@ -185,6 +189,11 @@ public class Manual {
                 System.out.println("Atacou o inimigo " + enemies[i].getName() + "! Pontos de vida do inimigo: " + enemies[i].getLifePoints());
             }
         }
+        setgetDeadEnemies();
+    }
+
+    public void setgetDeadEnemies() {
+        mission.setDeadEnemies(deadEnemies);
     }
 
     private void encounter() throws NullException, InvalidTypeException {
@@ -229,11 +238,6 @@ public class Manual {
             }
         }
         return false;
-    }
-
-    public void enemiesAttack(Enemy enemy) {
-        toCruz.reduceLifePoints(enemy.getPower());
-        System.out.println("Inimigo " + enemy.getName() + " atacou! Dano: " + enemy.getPower());
     }
 
     private void useMedicalKit() throws NullException, InvalidTypeException {
@@ -282,20 +286,20 @@ public class Manual {
     private void showRealTimeInfo() {
         System.out.println("Inimigos:");
         for (Enemy enemy : mission.getAllEnemies()) {
-            System.out.println("Inimigo em " + enemy.getCurrentDivision());
+            System.out.println("Inimigo [nome: " + enemy.getName() + ", poder: " + enemy.getPower() + "], em " + enemy.getCurrentDivision().getName());
         }
 
         System.out.println("Kits médicos:");
         for (Item kit : mission.getAllItems()) {
             if (kit.getItemType() == Item_Type.KIT) {
-                System.out.println("Kit médico em " + kit.getDivision());
+                System.out.println("Kit médico em " + kit.getDivision().getName() + ", cura: " + kit.getAmount());
             }
         }
 
         System.out.println("Coletes:");
         for (Item vest : mission.getAllItems()) {
             if (vest.getItemType() == Item_Type.VEST) {
-                System.out.println("Colete em " + vest.getDivision());
+                System.out.println("Colete em " + vest.getDivision().getName() + ", protege: " + vest.getAmount());
             }
         }
 

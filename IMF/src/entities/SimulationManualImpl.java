@@ -32,7 +32,7 @@ public class SimulationManualImpl implements Comparable, SimulationManual {
     /**
      * Array de String que contem o caminho que o Tó Cruz fez na simulação.
      */
-    private Queue<Division> path;
+    private String[] path;
 
 
     /**
@@ -61,6 +61,19 @@ public class SimulationManualImpl implements Comparable, SimulationManual {
     public SimulationManualImpl(Double lifePoints, Queue<Division> path, boolean target) {
         this.lifePoints = lifePoints;
         this.getTarget = target;
+        this.path = new String[path.size()];
+        int i = 0;
+        while (!path.isEmpty()) {
+            Division div = path.dequeue();
+            this.path[i] = div.getName();
+            i++;
+        }
+    }
+
+    public SimulationManualImpl(Double lifePoints, String[] path, boolean target) {
+        this.lifePoints = lifePoints;
+        this.getTarget = target;
+        this.path = new String[path.length];
         this.path = path;
     }
 
@@ -89,7 +102,7 @@ public class SimulationManualImpl implements Comparable, SimulationManual {
      *
      * @return o caminho percorrido na Simulação.
      */
-    public Queue<Division> getPath() {
+    public String[] getPath() {
         return path;
     }
 
@@ -101,7 +114,13 @@ public class SimulationManualImpl implements Comparable, SimulationManual {
      * @param path LinkedQueue que representa o caminho percorrido na Simulação
      */
     public void setPath(Queue<Division> path) {
-        this.path = path;
+        this.path = new String[path.size()];
+        int i = 0;
+        while (!path.isEmpty()) {
+            Division div = path.dequeue();
+            this.path[i] = div.getName();
+            i++;
+        }
     }
 
     /**
@@ -111,7 +130,11 @@ public class SimulationManualImpl implements Comparable, SimulationManual {
      * @return o numero de quantas divisões foram percorridas na Simulação.
      */
     public Integer getNumDivisions() {
-        return path.size();
+        int countNumDivisions = 0;
+        while (countNumDivisions < path.length) {
+            countNumDivisions++;
+        }
+        return countNumDivisions;
     }
 
     /**
@@ -176,14 +199,13 @@ public class SimulationManualImpl implements Comparable, SimulationManual {
      */
     @Override
     public String toString() {
-        Queue<Division> path2 = getPath();
         String s = "";
         s += "\n\tPontos de vida: " + lifePoints;
         s += "\n\tAlvo: " + getTarget;
         s += "\n\tCaminho Percorrido: ";
-        for (int i = 0; i < path2.size(); i++) {
-            s += path2.dequeue();
-            if (i != path2.size() - 1) {
+        for (int i = 0; i < path.length; i++) {
+            s += path[i];
+            if (i != path.length - 1) {
                 s += ", ";
             }
         }

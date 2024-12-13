@@ -1,5 +1,6 @@
 package interfaces;
 
+import entities.SimulationManualImpl;
 import exceptions.NullException;
 import graph.GraphMatrix;
 import orderedUnorderedList.ArrayOrderedList;
@@ -76,7 +77,7 @@ public interface Mission {
      *
      * @return ArrayOrderedList of SimulationManual
      */
-    ArrayOrderedList<SimulationManual> getSimulation();
+    ArrayOrderedList<SimulationManualImpl> getSimulation();
 
     /**
      * Adds a manual simulation to the mission.
@@ -84,7 +85,7 @@ public interface Mission {
      * @param simulation SimulationManual to add
      * @throws NullException if simulation is null
      */
-    void addSimulation(SimulationManual simulation) throws NullException;
+    void addSimulation(SimulationManualImpl simulation) throws NullException;
 
     /**
      * Checks if the mission is valid.
