@@ -6,7 +6,6 @@
 package entities;
 
 import Queue.Queue;
-import com.google.gson.annotations.SerializedName;
 import exceptions.InvalidTypeException;
 import exceptions.NullException;
 import graph.GraphMatrix;
@@ -17,8 +16,6 @@ import orderedUnorderedList.ArrayUnorderedList;
 
 import java.util.Arrays;
 import java.util.Iterator;
-import java.util.LinkedList;
-
 /**
  * Estrutura de Dados - 2020-2021.
  *
@@ -35,18 +32,15 @@ public class MissionImpl implements Mission {
     /**
      * Código da missão do tipo String.
      */
-    @SerializedName(value = "cod", alternate = {"cod-missao"})
     private String cod;
     /**
      * Versão da missão do tipo Inteiro.
      */
-    @SerializedName(value = "version", alternate = {"versao"})
     private Integer version;
 
     /**
      * Instancia da classe Target que representa o alvo da missão.
      */
-    @SerializedName(value = "target", alternate = {"alvo"})
     private Target target;
 
     /**
@@ -85,11 +79,6 @@ public class MissionImpl implements Mission {
      * @param division divisão alvo.
      * @param type tipo do alvo.
      */
-    public MissionImpl(String cod, Integer version, Division division, String type) {
-        this.cod = cod;
-        this.version = version;
-        this.target = new TargetImpl(division, type);
-    }
 
     /**
      * Construtor que cria uma Missão.Recebe como parâmetro o codigo da missão,
@@ -130,16 +119,7 @@ public class MissionImpl implements Mission {
         this.target = target;
         this.exitEntry = exitEntry;
         this.building = building;
-        this.simulation = new ArrayOrderedList<SimulationManualImpl>();
-    }
-
-    public MissionImpl(String cod, Integer version, Target target, ArrayUnorderedList<Division> exitEntry, GraphMatrix<Division> building, ArrayOrderedList<SimulationManualImpl> simulation) {
-        this.cod = cod;
-        this.version = version;
-        this.target = target;
-        this.exitEntry = exitEntry;
-        this.building = building;
-        this.simulation = simulation;
+        this.simulation = new ArrayOrderedList<>();
     }
 
     /**

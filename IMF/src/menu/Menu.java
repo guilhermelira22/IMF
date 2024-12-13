@@ -1,6 +1,5 @@
 package menu;
 
-import Queue.Queue;
 import entities.MissionImpl;
 import entities.SimulationManualImpl;
 import exceptions.InvalidFileException;
@@ -8,7 +7,6 @@ import exceptions.InvalidTypeException;
 import exceptions.NullException;
 import interfaces.Division;
 import interfaces.Enemy;
-import interfaces.SimulationManual;
 import json.Exporter;
 import json.MapBuilder;
 import orderedUnorderedList.ArrayOrderedList;
@@ -25,7 +23,6 @@ public class Menu {
 
     private String file;
     private MissionImpl mission;
-    private int x = 0;
 
     public Menu() throws InvalidFileException, NullException, InvalidTypeException, FileNotFoundException {
         mission = new MissionImpl();
@@ -38,14 +35,14 @@ public class Menu {
         boolean isMissionValid = false;
 
         do {
-            System.out.println("\n\t\tWELCOME TO THE IMF SIMULATOR\n");
-            System.out.println("Available Missions:");
+            System.out.println("\n\t\tBEM VINDO AO SIMULADOR DAS MISSÕES DO IMPLACÁVEL TÓ CRUZ\n");
+            System.out.println("Missões Disponíveis:");
 
             File folder = new File("maps");
             File[] missionFiles = folder.listFiles();
 
             if (missionFiles == null || missionFiles.length == 0) {
-                System.out.println("No missions available. Please add mission files to the 'maps' directory.");
+                System.out.println("Não há missões disponíveis. Por favor adicione uma no diretório 'maps'.");
                 return;
             }
 
@@ -53,7 +50,7 @@ public class Menu {
                 System.out.println("[" + (i + 1) + "] " + missionFiles[i].getName().replace(".json", ""));
             }
 
-            System.out.print("\nEnter the number of the mission you want to play: ");
+            System.out.print("\nIntroduza a missão que pretende simular: ");
             String input = scanner.nextLine();
 
             try {
@@ -68,23 +65,23 @@ public class Menu {
                         this.file = selectedMission;
                         isMissionValid = true;
 
-                        System.out.println("\nMission '" + selectedMission.replace(".json", "") + "' successfully loaded and validated!\n");
+                        System.out.println("\nMissão '" + selectedMission.replace(".json", "") + "' carregada e validada com sucesso!\n");
                     } catch (InvalidFileException e) {
-                        System.out.println("Error: " + e.getMessage());
+                        System.out.println("Erro: " + e.getMessage());
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
                 } else {
-                    System.out.println("Invalid option. Please select a number between 1 and " + missionFiles.length + ".");
+                    System.out.println("Opção inválida. Por favor escolha um nº entre 1 e " + missionFiles.length + ".");
                 }
             } catch (NumberFormatException e) {
-                System.out.println("Invalid input. Please enter a valid number.");
+                System.out.println("Opção inválida. Por favor escolha um nº válido.");
             }
 
         } while (!isMissionValid);
     }
 
-    public void mainMenu() throws InvalidFileException, FileNotFoundException, NullException, InvalidTypeException {
+    public void mainMenu() throws NullException, InvalidTypeException {
         Scanner scanner = new Scanner(System.in, "ISO-8859-1");
         boolean exit = false;
 
@@ -138,17 +135,17 @@ public class Menu {
         }
     }
 
-    private void simManual(String file) throws InvalidFileException, FileNotFoundException, NullException, InvalidTypeException {
+    private void simManual(String file) throws NullException, InvalidTypeException {
         resetMap();
         Manual m = new Manual(mission);
         try {
-            m.start(file);
+            m.start();
         } catch (InvalidFileException | NullException | InvalidTypeException ex) {
             System.out.println(ex.getMessage());
         }
     }
 
-    private void simAuto() throws NullException, InvalidTypeException, InvalidFileException, FileNotFoundException {
+    private void simAuto() throws NullException, InvalidTypeException {
         resetMap();
         Double MaxLifePoints = 0.0;
         String path = "";
@@ -186,7 +183,7 @@ public class Menu {
         System.out.println("\n");
     }
 
-    private void resetMap() throws InvalidFileException, FileNotFoundException, NullException, InvalidTypeException {
+    private void resetMap() throws NullException, InvalidTypeException {
         for (Division d : mission.getDivisions()) {
             for (Enemy e : d.getEnemies()) {
                 if (e != null) {

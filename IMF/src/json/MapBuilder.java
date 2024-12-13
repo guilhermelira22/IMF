@@ -13,15 +13,14 @@ import graph.GraphMatrix;
 import interfaces.Division;
 import interfaces.Enemy;
 import interfaces.Item;
-import orderedUnorderedList.ArrayOrderedList;
 import orderedUnorderedList.ArrayUnorderedList;
 
 import java.io.*;
 
 public class MapBuilder extends Import{
     private String file;
-    private static String pathExport = "simulations/";
-    private static String EXTENSION = ".json";
+    private final static String pathExport = "simulations/";
+    private final static String EXTENSION = ".json";
     private DivisionImpl[] divisionImpls;
     private Enemy[] enemies;
     private String[][] edges;
@@ -46,14 +45,14 @@ public class MapBuilder extends Import{
 
         if (!isTargetDivisionValid(missonJson)) {
             throw new InvalidFileException("Target is invalid");
-        } else if (!isEntriesExitsDivisionValid()) {
-            throw new InvalidFileException("Entries exits divisions are invalid");
-        } else if (!isDivisionEdgesValid()) {
-            throw new InvalidFileException("Edges is invalid");
+        }  else if (!isDivisionEdgesValid()) {
+            throw new InvalidFileException("Edges are invalid");
         } else if (!isItemsValid()){
             throw new InvalidFileException("Items are invalid");
         } else if (!isEnemiesValid()){
             throw new InvalidFileException("Enemies are invalid");
+        } else if (!isEntriesExitsDivisionValid()) {
+            throw new InvalidFileException("Entries exits divisions are invalid");
         }
         MissionImpl mission = new MissionImpl(missonJson.getCod(), missonJson.getVersion(), missonJson.getTarget(), entriesExits, building);
 

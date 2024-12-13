@@ -10,20 +10,13 @@ import graph.GraphMatrix;
 import interfaces.Division;
 import interfaces.Enemy;
 import interfaces.Item;
-import interfaces.Mission;
-import json.Exporter;
 import orderedUnorderedList.ArrayUnorderedList;
-import stack.LinkedStack;
-import interfaces.To;
 
-import java.io.File;
 import java.util.*;
 
 public class Manual {
 
-    private static final Double LIFE_DEFAULT = 100.0;
     private static final int POWER = 40;
-    private static final String STRING_AUX = "\n*-*-*-*-*-*-*-*-*\n";
 
     private Queue<Division> path;
     private MissionImpl mission;
@@ -40,7 +33,7 @@ public class Manual {
         this.toCruz = new ToImpl(40.0);
     }
 
-    public void start(String file) throws InvalidFileException, NullException, InvalidTypeException {
+    public void start() throws InvalidFileException, NullException, InvalidTypeException {
 
         chooseStartDivision();
 
@@ -165,7 +158,7 @@ public class Manual {
                 useMedicalKit();
                 validChoice = true;
             } else if (choice.equals("3") && toCruz.getDivision().isEntryExit()) {
-                finishMission(mission.getTarget().getDivision());
+                finishMission();
                 validChoice = true;
             } else {
                 System.out.println("Opção inválida, tente novamente.");
@@ -269,7 +262,7 @@ public class Manual {
         }
     }
 
-    private void finishMission(Division target) {
+    private void finishMission() {
         if (flagTarget && toCruz.getDivision().isEntryExit()) {
             System.out.println("Missão concluída com sucesso! Parabéns Tó Cruz!!");
             flagLeft = true;

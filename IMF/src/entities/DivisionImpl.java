@@ -10,10 +10,7 @@ import exceptions.NullException;
 import interfaces.Division;
 import interfaces.Enemy;
 import interfaces.Item;
-import list.LinkedList;
 import orderedUnorderedList.ArrayUnorderedList;
-
-import java.util.Arrays;
 
 /**
  * Estrutura de Dados - 2020-2021.
@@ -29,7 +26,7 @@ public class DivisionImpl implements Division {
     /**
      * Capacidade por defeito para o número de inimigos numa divisão.
      */
-    private static int DEFAULT_CAPACITY = 1;
+    private static final int DEFAULT_CAPACITY = 1;
 
     /**
      * String, que identifca o nome da divisão.
@@ -64,26 +61,6 @@ public class DivisionImpl implements Division {
     public DivisionImpl() {
     }
 
-    /**
-     * Construtor que cria uma divisão. Recebe como parametro o seu nome e o
-     * valor boleano que identifica que se trata de uma divisão de entrada ou
-     * saída. O array dos inimigos é criado com uma capacidade por defeito, cada
-     * elemento do array de inimigos deve ser uma instancia de
-     * {}.O array desordenado que representa as ligações
-     * da divisão é tambem instanciado mas vazio.
-     *
-     * @param name String que identifica a divisão.
-     * @param entryExit Boleano que identifica que se trata de uma divisão de
-     * entrada ou saída.
-     */
-    public DivisionImpl(String name, boolean entryExit) {
-        this.name = name;
-        this.entryExit = entryExit;
-        this.enemies = new EnemyImpl[DEFAULT_CAPACITY];
-        this.numEnemies = 0;
-        this.edges = new ArrayUnorderedList<>();
-        this.item = null;
-    }
 
     /**
      * Construtor que cria uma divisão. Recebe como parametro o seu nome. O
@@ -100,26 +77,6 @@ public class DivisionImpl implements Division {
         this.entryExit = false;
         this.enemies = new EnemyImpl[DEFAULT_CAPACITY];
         this.numEnemies = 0;
-        this.edges = new ArrayUnorderedList<>();
-    }
-
-    /**
-     * Construtor que cria uma divisão. Recebe como parametro o seu nome, o
-     * valor boleano que identifica que se trata de uma divisão de entrada ou
-     * saída e o array com os inimigos que se encontram na divisão, os inimigos
-     * são instancias da classe {}.O array desordenado que
-     * representa as ligações da divisão é tambem instanciado mas vazio.
-     *
-     * @param name String que identifica a divisão.
-     * @param entryExit Boleano que identifica que se trata de uma divisão de
-     * entrada ou saída.
-     * @param enemies Array com os inimigos que a divisão contém.
-     */
-    public DivisionImpl(String name, boolean entryExit, EnemyImpl[] enemies) {
-        this.name = name;
-        this.entryExit = entryExit;
-        this.enemies = enemies;
-        this.numEnemies = enemies.length;
         this.edges = new ArrayUnorderedList<>();
     }
 
@@ -154,11 +111,7 @@ public class DivisionImpl implements Division {
      * Troca o valor boleano da divisão em relação a ser uma entrada e saída.
      */
     public void setEntryExit() {
-        if (this.entryExit) {
-            this.entryExit = false;
-        } else {
-            this.entryExit = true;
-        }
+        this.entryExit = !this.entryExit;
     }
 
     /**
@@ -299,7 +252,7 @@ public class DivisionImpl implements Division {
      * caso contrario.
      */
     private int findEnemy(String name) {
-        Integer send = -1;
+        int send = -1;
         for (int i = 0; i < this.numEnemies; i++) {
             if (name.equals(enemies[i])) {
                 send = i;
@@ -323,11 +276,6 @@ public class DivisionImpl implements Division {
         EnemyImpl[] newEnemies = new EnemyImpl[enemies.length + DEFAULT_CAPACITY];
         System.arraycopy(enemies, 0, newEnemies, 0, numEnemies);
         enemies = newEnemies;
-        /* Enemy[] newEnemies = new Enemy[this.numEnemies + DEFAULT_CAPACITY];
-        for (int i = 0; i < this.numEnemies; i++) {
-            newEnemies[i] = this.enemies[i];
-        }
-        this.enemies = newEnemies;*/
     }
 
     /**
